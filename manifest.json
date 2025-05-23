@@ -18,7 +18,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["back.png", "zoro-run.gif"],
+      "resources": ["back.png", "runner.gif"],
       "matches": ["https://newerp.kluniversity.in/*"]
     }
   ],

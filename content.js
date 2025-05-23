@@ -5,7 +5,7 @@ function styleHeaderLinks() {
   if (headerDiv) {
     // Remove the red background and set animated GIF
     headerDiv.style.backgroundColor = 'transparent';
-    headerDiv.style.backgroundImage = `url('${chrome.runtime.getURL('zoro-run.gif')}')`;
+    headerDiv.style.backgroundImage = `url('${chrome.runtime.getURL('runner.gif')}')`;
     headerDiv.style.backgroundSize = 'auto 40px'; // Slightly smaller to fit better
     headerDiv.style.backgroundPosition = '-100px center'; // Start off-screen left
     headerDiv.style.backgroundRepeat = 'no-repeat';

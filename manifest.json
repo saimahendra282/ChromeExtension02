@@ -18,7 +18,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["back.png", "runner.gif"],
+      "resources": ["back.png", "runner.gif","close-icon.png"],
       "matches": ["https://newerp.kluniversity.in/*"]
     }
   ],

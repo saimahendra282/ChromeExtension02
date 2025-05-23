@@ -18,3 +18,4 @@ Anyway, if you want to try this extension, first download this repo.
 ### 📝 Small Note
 
 **THIS repo updates continuously, and please don’t be offended if you don’t like the CSS — I like it 😄**
+<h3>If you liked my work please star this repo</h3>

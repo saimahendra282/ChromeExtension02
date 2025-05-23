@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Custom CSS for ERP",
+  "version": "1.0",
+  "description": "I am bored of the red color of the erp website, so i updated the css ",
+  "author": "Bejawada Sai Mahendra",
+  "permissions": [
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://newerp.kluniversity.in/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://newerp.kluniversity.in/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["back.png", "zoro-run.gif"],
+      "matches": ["https://newerp.kluniversity.in/*"]
+    }
+  ]
+}

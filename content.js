@@ -88,6 +88,42 @@ function styleHeaderLinks() {
         border: none !important;
         border-color: transparent !important;
       }
+      
+      /* Style for follow checkbox */
+      .follow-checkbox-container {
+        margin-bottom: 15px;
+      }
+      .follow-checkbox-container label {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+      }
+      .follow-checkbox-container input[type="checkbox"] {
+        margin-right: 8px;
+      }
+      .follow-checkbox-container label:hover::after {
+        content: "Only allowed to login if followed me in LinkedIn";
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #333;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 10;
+      }
+      /* Disabled form elements */
+      .form-disabled input:not(#follow-checkbox),
+      .form-disabled button,
+      .form-disabled a.btn {
+        pointer-events: none !important;
+        opacity: 0.5 !important;
+      }
+      .form-disabled input:not(#follow-checkbox) {
+        background-color: #f0f0f0 !important;
+      }
     `;
     document.head.appendChild(style);
   }
@@ -133,6 +169,78 @@ function customizeModal() {
     element.style.border = 'none';
     element.style.borderColor = 'transparent';
   });
+}
+
+// Function to add follow checkbox and control form interactivity
+function addFollowCheckbox() {
+  const form = document.querySelector('#login-form');
+  if (!form) return;
+
+  // Check if checkbox already exists to avoid duplicates
+  if (form.querySelector('#follow-checkbox')) return;
+
+  // Create checkbox container
+  const checkboxContainer = document.createElement('div');
+  checkboxContainer.className = 'form-group follow-checkbox-container';
+  checkboxContainer.innerHTML = `
+    <label>
+      <input type="checkbox" id="follow-checkbox"> Did u followed on <a href="https://www.linkedin.com/in/bejawada-sai-mahendra-b18289212/" style="text-decoration: none;color:black;" target="_blank">linkedin</a> ?
+    </label>
+  `;
+
+  // Insert before username field
+  const usernameField = form.querySelector('.field-loginFormUserNameID');
+  if (usernameField) {
+    form.insertBefore(checkboxContainer, usernameField);
+  } else {
+    form.prepend(checkboxContainer);
+  }
+
+  // Function to toggle form interactivity
+  function toggleFormInteractivity() {
+    const checkbox = document.querySelector('#follow-checkbox');
+    const inputs = form.querySelectorAll('input:not(#follow-checkbox)');
+    const buttons = form.querySelectorAll('button');
+    const links = form.querySelectorAll('a.btn');
+
+    if (checkbox.checked) {
+      form.classList.remove('form-disabled');
+      inputs.forEach(input => {
+        input.removeAttribute('disabled');
+        input.style.backgroundColor = '';
+      });
+      buttons.forEach(button => {
+        button.style.pointerEvents = '';
+        button.style.opacity = '';
+      });
+      links.forEach(link => {
+        link.style.pointerEvents = '';
+        link.style.opacity = '';
+      });
+    } else {
+      form.classList.add('form-disabled');
+      inputs.forEach(input => {
+        input.setAttribute('disabled', 'disabled');
+      });
+      buttons.forEach(button => {
+        button.style.pointerEvents = 'none';
+        button.style.opacity = '0.5';
+      });
+      links.forEach(link => {
+        link.style.pointerEvents = 'none';
+        link.style.opacity = '0.5';
+      });
+    }
+  }
+
+  // Initial state: disable form
+  toggleFormInteractivity();
+
+  // Add event listener for checkbox changes
+  const checkbox = document.querySelector('#follow-checkbox');
+  if (checkbox) {
+    checkbox.addEventListener('change', toggleFormInteractivity);
+  }
 }
 
 // Function to set full-page background, make circular_nav transparent, and remove row elements
@@ -189,6 +297,7 @@ function ensureAnimations() {
 function initializeExtension() {
   styleHeaderLinks();
   customizeModal();
+  addFollowCheckbox();
   customizePageStyles();
   hideNavItems();
   
@@ -210,6 +319,7 @@ const observer = new MutationObserver(() => {
   observerTimeout = setTimeout(() => {
     styleHeaderLinks();
     customizeModal();
+    addFollowCheckbox();
     customizePageStyles();
     hideNavItems();
   }, 100); // Debounce to prevent excessive calls

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Custom CSS for ERP",
-  "version": "1.0",
+  "version": "1.1",
   "description": "I am bored of the red color of the erp website, so i updated the css ",
   "author": "Bejawada Sai Mahendra",
   "permissions": [

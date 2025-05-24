@@ -10,22 +10,32 @@
   "host_permissions": [
     "https://newerp.kluniversity.in/*"
   ],
-  "content_scripts": [
+"content_scripts": [
+    {
+      "matches": [
+        "https://newerp.kluniversity.in/",
+        "https://newerp.kluniversity.in/index.php"
+      ],
+      "js": ["content.js"]
+    },
     {
       "matches": ["https://newerp.kluniversity.in/*"],
-      "js": ["content.js"]
+      "exclude_matches": [
+        "https://newerp.kluniversity.in/",
+        "https://newerp.kluniversity.in/index.php"
+      ],
+      "js": ["other.js"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["back.png", "runner.gif","close-icon.png"],
+      "resources": ["back.png", "runner.gif"],
       "matches": ["https://newerp.kluniversity.in/*"]
     }
   ],
   "icons": {
     "16": "l16.png",
-    "32": "l32.png",
-    "48":"l48.png",
+    "48": "l48.png",
     "128": "l128.png"
   }
 }

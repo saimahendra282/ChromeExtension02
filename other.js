@@ -165,6 +165,98 @@ function playTrack(trackIndex) {
     }, { once: true });
   });
 }
+function hideFooter() {
+  const footer = document.querySelector('#mainlayout_footer');
+  if (footer) {
+    footer.style.display = 'none';
+  }
+}
+hideFooter();
+function modifyLayout() {
+  // Add image to text-center div
+  const textCenterDiv = document.querySelector('.text-center[style*="font-size:20px;margin-top:30px;"]');
+  const userImg = document.querySelector('.col-sm-2.col-md-2.col-lg-2 .mainlayout_user img');
+  if (textCenterDiv && userImg) {
+    const clonedImg = userImg.cloneNode(true);
+    clonedImg.style.width = '30px';
+    clonedImg.style.height = '30px';
+    clonedImg.style.borderRadius = '50%';
+    clonedImg.style.marginRight = '10px';
+    textCenterDiv.insertBefore(clonedImg, textCenterDiv.firstChild);
+  }
+
+  // Make navbar transparent and hide it
+  const navbar = document.querySelector('.navbar-inverse.navbar');
+  if (navbar) {
+    navbar.style.setProperty('background-color', 'transparent', 'important');
+    navbar.style.setProperty('border-color', 'transparent', 'important');
+    navbar.style.display = 'none';
+  }
+
+  // Change logout button color to black
+  const logoutButton = document.querySelector('.btn.btn-link.logout');
+  if (logoutButton) {
+    logoutButton.style.color = 'black';
+  }
+
+  // Hide brand_logo
+  const brandLogo = document.querySelector('#brand_logo');
+  if (brandLogo) {
+    brandLogo.style.display = 'none';
+  }
+
+  // Hide the specific div with col-sm-2 col-md-2 col-lg-2 classes and flex styles
+  const targetDiv = document.querySelector('.col-sm-2.col-md-2.col-lg-2[style*="display: flex"][style*="align-items: center"][style*="justify-content: end"]');
+  if (targetDiv) {
+    targetDiv.style.display = 'none';
+  }
+
+  // Hide navbar-collapse and move logout to header
+  const navbarCollapse = document.querySelector('#navbar-collapse.collapse.navbar-collapse');
+  if (navbarCollapse) {
+    navbarCollapse.style.display = 'none';
+  }
+
+  // Copy logout ul and place it in the header
+  const logoutUl = document.querySelector('#w0.navbar-nav.navbar-right.nav');
+  const mainLayoutHeader = document.querySelector('#mainlayout_header');
+  
+  if (logoutUl && mainLayoutHeader) {
+    // Clone the logout ul
+    const clonedLogoutUl = logoutUl.cloneNode(true);
+    
+    // Style the cloned logout for header placement
+    clonedLogoutUl.style.cssText = `
+      background-color: transparent;
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    `;
+    
+    // Make sure the header has relative positioning
+    mainLayoutHeader.style.position = 'relative';
+    
+    // Add the cloned logout to the header
+    mainLayoutHeader.appendChild(clonedLogoutUl);
+  }
+
+  // Change mainlayout_header background color to white and reduce height
+  if (mainLayoutHeader) {
+    mainLayoutHeader.style.backgroundColor = 'white';
+    mainLayoutHeader.style.height = '60px';
+    mainLayoutHeader.style.minHeight = '60px';
+    mainLayoutHeader.style.maxHeight = '60px';
+    mainLayoutHeader.style.overflow = 'hidden';
+  }
+}
+
+modifyLayout();
+// Run the function when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', modifyLayout);
 
 function initMusicPlayer() {
   if (document.readyState === 'loading') {

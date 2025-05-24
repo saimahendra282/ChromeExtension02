@@ -78,25 +78,6 @@ function styleHeaderLinks() {
         display: none !important;
       }
       
-      /* Style close button image */
-      .modal-header .close {
-        background: none !important;
-        border: none !important;
-        padding: 0 !important;
-        width: 24px !important;
-        height: 24px !important;
-        opacity: 0.7 !important;
-        transition: opacity 0.2s !important;
-      }
-      .modal-header .close:hover {
-        opacity: 1 !important;
-      }
-      .modal-header .close img {
-        width: 100% !important;
-        height: 100% !important;
-        display: block !important;
-      }
-      
       /* Hide modal footer with copyright notice */
       .modal-footer {
         display: none !important;
@@ -128,7 +109,7 @@ function styleHeaderLinks() {
   }
 }
 
-// Function to customize modal headers (hide logo, replace close button with image)
+// Function to customize modal headers (hide logo, hide footer, remove red border)
 function customizeModal() {
   // Select all modal headers
   const modalHeaders = document.querySelectorAll('.modal-header');
@@ -137,12 +118,6 @@ function customizeModal() {
     const logoDiv = header.querySelector('div[style*="margin-top:-35px"][style*="text-align:center"]');
     if (logoDiv) {
       logoDiv.style.display = 'none';
-    }
-
-    // Replace close button content with image
-    const closeButton = header.querySelector('button.close[data-dismiss="modal"]');
-    if (closeButton) {
-      closeButton.innerHTML = `<img src="${chrome.runtime.getURL('close-icon.png')}" alt="Close">`;
     }
   });
 

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Custom CSS for ERP",
   "version": "1.4",
-  "description": "added bg img,removed footer in landing page, added  music player inside the erp",
+  "description": "added bg img,removed footer, added  music player inside the erp and many more",
   "author": "Bejawada Sai Mahendra",
   "permissions": [
     "activeTab",
@@ -30,7 +30,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["back.png", "runner.gif", "background_music.mp3"],
+      "resources": ["back.png", "runner.gif", "slava.mp3","background_music.mp3"],
       "matches": ["https://newerp.kluniversity.in/*"]
     }
   ],

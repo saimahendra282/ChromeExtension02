@@ -1,4 +1,5 @@
 const musicFiles = [
+  'slava.mp3',
   'background_music.mp3'
 ];
 

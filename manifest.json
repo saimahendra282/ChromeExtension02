@@ -1,16 +1,17 @@
 {
   "manifest_version": 3,
   "name": "Custom CSS for ERP",
-  "version": "1.1",
-  "description": "I am bored of the red color of the erp website, so i updated the css ",
+  "version": "1.2",
+  "description": "added bg img,removed footer in landing page, added bg music inside the erp",
   "author": "Bejawada Sai Mahendra",
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "storage"
   ],
   "host_permissions": [
     "https://newerp.kluniversity.in/*"
   ],
-"content_scripts": [
+  "content_scripts": [
     {
       "matches": [
         "https://newerp.kluniversity.in/",
@@ -29,7 +30,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["back.png", "runner.gif"],
+      "resources": ["back.png", "runner.gif", "background_music.mp3"],
       "matches": ["https://newerp.kluniversity.in/*"]
     }
   ],

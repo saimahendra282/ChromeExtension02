@@ -10,6 +10,7 @@ class ChatbotExtension {
     };
     this.userId = null;
     this.maxRetries = 3;
+    this.logoutObserver = null;
 
     this.init();
   }
@@ -37,41 +38,178 @@ class ChatbotExtension {
 
     // Check if we just navigated to CGPA page
     if (this.chatState.isWaitingForCGPA) {
-      // console.log('Detected navigation to CGPA page, attempting extraction...');
+      console.log('Detected navigation to CGPA page, attempting extraction...');
       setTimeout(() => this.handleCGPAPageLoad(), 2000);
     }
 
     this.createChatElements();
     this.setupEventListeners();
     this.setupMessageListener();
-    this.setupLogoutListener(); // New: Setup logout button listener
+    this.setupLogoutListener();
     this.isInitialized = true;
 
     // Auto-open chat on page load (always open)
     setTimeout(() => this.openChat(), 1000);
   }
 
-  // **New: Setup logout button listener**
+  // **Fixed: Setup logout button listener**
   setupLogoutListener() {
-    // Find the logout button and add event listener
-    const logoutButton = document.querySelector('button.btn.btn-link.logout.pull-right');
-    if (logoutButton) {
-      logoutButton.addEventListener('click', () => {
-        // console.log('Logout button clicked, resetting chat...');
-        this.resetChat();
+    // Enhanced selectors to match various logout button patterns
+    const logoutSelectors = [
+      // Original button selectors
+      'button[type="submit"].btn.btn-link.logout.pull-right',
+      'button.btn.btn-link.logout.pull-right',
+      'button.logout',
+      // Cloned button selectors
+      '#w0.navbar-nav.navbar-right.nav button[type="submit"].btn.btn-link.logout.pull-right',
+      '#w0 button.logout',
+      // Fixed position selectors
+      '[style*="position: fixed"][style*="top: 10px"][style*="right: 10px"] button.logout',
+      '[style*="position: fixed"] button[type="submit"].logout',
+      // Generic fallbacks
+      '.logout',
+      'button[type="submit"]',
+      // Additional patterns
+      'a[href*="logout"]',
+      'a.logout',
+      '[onclick*="logout"]',
+      'form[action*="logout"] button',
+      'form[action*="logout"] input[type="submit"]'
+    ];
+
+    // Function to attach listener to a button
+    const attachListener = (element, selector) => {
+      if (element && !element.hasAttribute('data-chat-logout-listener')) {
+        element.setAttribute('data-chat-logout-listener', 'true');
+        
+        // Handle both click and form submission
+        element.addEventListener('click', this.handleLogoutClick.bind(this));
+        
+        // If it's a form, also listen to form submission
+        if (element.tagName.toLowerCase() === 'form') {
+          element.addEventListener('submit', this.handleLogoutClick.bind(this));
+        }
+        
+        // If it's inside a form, listen to the form as well
+        const parentForm = element.closest('form');
+        if (parentForm && !parentForm.hasAttribute('data-chat-logout-listener')) {
+          parentForm.setAttribute('data-chat-logout-listener', 'true');
+          parentForm.addEventListener('submit', this.handleLogoutClick.bind(this));
+        }
+        
+        console.log(`Logout listener attached to: ${selector}`, element);
+        return true;
+      }
+      return false;
+    };
+
+    // Function to check if element is a logout element
+    const isLogoutElement = (element) => {
+      const text = element.textContent.toLowerCase();
+      const className = element.className.toLowerCase();
+      const id = element.id.toLowerCase();
+      const href = element.getAttribute('href') || '';
+      const onclick = element.getAttribute('onclick') || '';
+      const action = element.getAttribute('action') || '';
+      
+      return (
+        className.includes('logout') ||
+        id.includes('logout') ||
+        text.includes('logout') ||
+        text.includes('log out') ||
+        text.includes('sign out') ||
+        href.includes('logout') ||
+        onclick.includes('logout') ||
+        action.includes('logout') ||
+        element.querySelector('.fa-user-lock') ||
+        element.querySelector('[class*="logout"]')
+      );
+    };
+
+    // Function to scan for logout buttons
+    const scanForLogoutButtons = () => {
+      let found = false;
+      
+      logoutSelectors.forEach(selector => {
+        try {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach(element => {
+            if (isLogoutElement(element)) {
+              if (attachListener(element, selector)) {
+                found = true;
+              }
+            }
+          });
+        } catch (e) {
+          // Ignore invalid selectors
+          console.warn(`Invalid selector: ${selector}`, e);
+        }
       });
+      
+      // Additional scan for any element containing logout text
+      const allButtons = document.querySelectorAll('button, a, input[type="submit"], form');
+      allButtons.forEach(element => {
+        if (isLogoutElement(element)) {
+          if (attachListener(element, 'text-based detection')) {
+            found = true;
+          }
+        }
+      });
+      
+      return found;
+    };
+
+    // Initial scan
+    const initialFound = scanForLogoutButtons();
+    console.log(`Initial logout button scan found: ${initialFound}`);
+
+    // Delayed scan for dynamically loaded elements
+    setTimeout(() => {
+      const delayedFound = scanForLogoutButtons();
+      console.log(`Delayed logout button scan found: ${delayedFound}`);
+    }, 2000);
+
+    // Additional delayed scan for late-loading elements
+    setTimeout(() => {
+      const lateFound = scanForLogoutButtons();
+      console.log(`Late logout button scan found: ${lateFound}`);
+    }, 5000);
+
+    // MutationObserver to catch dynamically added logout buttons
+    if (this.logoutObserver) {
+      this.logoutObserver.disconnect();
     }
 
-    // Also use MutationObserver to catch dynamically added logout buttons
-    const observer = new MutationObserver((mutations) => {
+    this.logoutObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType === 1) { // Element node
-            const logoutBtn = node.querySelector ? node.querySelector('button.btn.btn-link.logout.pull-right') : null;
-            if (logoutBtn) {
-              logoutBtn.addEventListener('click', () => {
-                // console.log('Logout button clicked (dynamically added), resetting chat...');
-                this.resetChat();
+            // Check if the node itself is a logout element
+            if (isLogoutElement(node)) {
+              attachListener(node, 'mutation observer - direct');
+            }
+            
+            // Check for logout elements within the added node
+            if (node.querySelectorAll) {
+              logoutSelectors.forEach(selector => {
+                try {
+                  const elements = node.querySelectorAll(selector);
+                  elements.forEach(element => {
+                    if (isLogoutElement(element)) {
+                      attachListener(element, `mutation observer - ${selector}`);
+                    }
+                  });
+                } catch (e) {
+                  // Ignore invalid selectors
+                }
+              });
+              
+              // Scan all buttons/links in the new node
+              const allInteractiveElements = node.querySelectorAll('button, a, input[type="submit"], form');
+              allInteractiveElements.forEach(element => {
+                if (isLogoutElement(element)) {
+                  attachListener(element, 'mutation observer - interactive');
+                }
               });
             }
           }
@@ -79,40 +217,72 @@ class ChatbotExtension {
       });
     });
 
-    observer.observe(document.body, {
+    this.logoutObserver.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'id', 'onclick', 'href']
     });
   }
 
-  // **New: Reset chat function**
-  async resetChat() {
-    // console.log('Resetting chat state...');
+  // **Fixed: Handle logout click**
+  handleLogoutClick(event) {
+    console.log('Logout button clicked, resetting chat...');
+    console.log('Event target:', event.target);
+    console.log('Event type:', event.type);
     
-    // Reset chat state
-    this.chatState = {
-      isOpen: false,
-      messages: [],
-      hasWelcomed: false,
-      isWaitingForCGPA: false,
-      cgpaRetryCount: 0
-    };
+    // Reset chat immediately (don't wait for navigation)
+    this.resetChat();
+    
+    // Optional: Add a small delay to ensure reset completes before navigation
+    // Note: We don't prevent default as we want the logout to proceed normally
+    setTimeout(() => {
+      console.log('Chat reset completed, logout will proceed normally');
+    }, 100);
+  }
 
-    // Clear storage
-    await chrome.storage.sync.remove(['chatState', 'userId']);
-    this.userId = null;
+  // **Fixed: Reset chat function**
+  async resetChat() {
+    console.log('Resetting chat state...');
+    
+    try {
+      // Reset chat state
+      this.chatState = {
+        isOpen: false,
+        messages: [],
+        hasWelcomed: false,
+        isWaitingForCGPA: false,
+        cgpaRetryCount: 0
+      };
 
-    // Clear chat messages UI
-    if (this.chatMessages) {
-      this.chatMessages.innerHTML = '';
+      // Clear storage
+      await chrome.storage.sync.remove(['chatState', 'userId']);
+      this.userId = null;
+      console.log('Storage cleared');
+
+      // Clear chat messages UI
+      if (this.chatMessages) {
+        this.chatMessages.innerHTML = '';
+        console.log('Chat messages UI cleared');
+      }
+
+      // Close chat if open
+      if (this.chatWindow && this.chatWindow.style.display === 'flex') {
+        this.closeChat();
+        console.log('Chat window closed');
+      }
+
+      // Clean up logout observer
+      if (this.logoutObserver) {
+        this.logoutObserver.disconnect();
+        this.logoutObserver = null;
+        console.log('Logout observer cleaned up');
+      }
+
+      console.log('Chat reset completed successfully');
+    } catch (error) {
+      console.error('Error during chat reset:', error);
     }
-
-    // Close chat if open
-    if (this.chatWindow && this.chatWindow.style.display === 'flex') {
-      this.closeChat();
-    }
-
-    // console.log('Chat reset completed');
   }
 
   // **Setup Background Script Communication**
@@ -356,14 +526,13 @@ class ChatbotExtension {
 
   // **This runs when we detect we're on the CGPA page after navigation**
   async handleCGPAPageLoad() {
-    // console.log('Handling CGPA page load...');
+    console.log('Handling CGPA page load...');
     
     // Try to extract CGPA
     const cgpa = await this.extractCGPAFromCurrentPage();
     
     if (cgpa) {
       // Success!
-      // this.addBotMessage('✅ CGPA page loaded successfully!');
       this.displayCGPA(cgpa);
       this.chatState.isWaitingForCGPA = false;
       this.saveChatState();
@@ -398,7 +567,7 @@ class ChatbotExtension {
   }
 
   async extractCGPAFromCurrentPage() {
-    // console.log('Extracting CGPA from current page...');
+    console.log('Extracting CGPA from current page...');
     
     // Wait for page to fully load
     await this.wait(3000);
@@ -582,6 +751,7 @@ class ChatbotExtension {
     this.scrollToBottom();
   }
 
+ 
   scrollToBottom() {
     this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
   }

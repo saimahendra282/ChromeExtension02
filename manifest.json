@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Custom CSS for ERP",
-  "version": "1.4",
-  "description": "added bg img,removed footer, added  music player inside the erp and many more",
+  "version": "1.5",
+  "description": "Added bg img, removed footer, added music player and chatbot inside the ERP, and many more",
   "author": "Bejawada Sai Mahendra",
   "permissions": [
     "activeTab",
@@ -17,7 +17,9 @@
         "https://newerp.kluniversity.in/",
         "https://newerp.kluniversity.in/index.php"
       ],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "run_at": "document_end",
+      "all_frames": false
     },
     {
       "matches": ["https://newerp.kluniversity.in/*"],
@@ -25,12 +27,14 @@
         "https://newerp.kluniversity.in/",
         "https://newerp.kluniversity.in/index.php"
       ],
-      "js": ["other.js"]
+      "js": ["other.js", "chat.js"],
+      "run_at": "document_end",
+      "all_frames": false
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["back.png", "runner.gif", "slava.mp3","background_music.mp3"],
+      "resources": ["back.png", "runner.gif", "slava.mp3", "background_music.mp3", "chat.html", "chat-icon.png"],
       "matches": ["https://newerp.kluniversity.in/*"]
     }
   ],

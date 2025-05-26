@@ -166,6 +166,7 @@ function playTrack(trackIndex) {
     }, { once: true });
   });
 }
+
 function hideFooter() {
   const footer = document.querySelector('#mainlayout_footer');
   if (footer) {
@@ -173,6 +174,7 @@ function hideFooter() {
   }
 }
 hideFooter();
+
 function modifyLayout() {
   // Add image to text-center div
   const textCenterDiv = document.querySelector('.text-center[style*="font-size:20px;margin-top:30px;"]');
@@ -212,39 +214,60 @@ function modifyLayout() {
     targetDiv.style.display = 'none';
   }
 
-  // Hide navbar-collapse and move logout to header
+  // Hide navbar-collapse
   const navbarCollapse = document.querySelector('#navbar-collapse.collapse.navbar-collapse');
   if (navbarCollapse) {
     navbarCollapse.style.display = 'none';
   }
 
-  // Copy logout ul and place it in the header
+  // Copy logout ul and place it at top right corner of the entire webpage
   const logoutUl = document.querySelector('#w0.navbar-nav.navbar-right.nav');
   const mainLayoutHeader = document.querySelector('#mainlayout_header');
+
+ try {
+  // Select the logout element
+  const logoutUl = document.querySelector('#w0.navbar-nav.navbar-right.nav');
   
-  if (logoutUl && mainLayoutHeader) {
-    // Clone the logout ul
+  // Check if the logout element exists
+  if (logoutUl) {
+    // Clone the logout element
     const clonedLogoutUl = logoutUl.cloneNode(true);
     
-    // Style the cloned logout for header placement
+    // Hide the original element to avoid duplication
+    logoutUl.style.display = 'none';
+    
+    // Style the cloned element to appear in the top-right corner
     clonedLogoutUl.style.cssText = `
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 9999;
       background-color: transparent;
-      position: absolute;
-      top: 50%;
-      right: 20px;
-      transform: translateY(-50%);
       margin: 0;
       padding: 0;
       list-style: none;
     `;
     
-    // Make sure the header has relative positioning
-    mainLayoutHeader.style.position = 'relative';
-    
-    // Add the cloned logout to the header
-    mainLayoutHeader.appendChild(clonedLogoutUl);
+    // Append the cloned element to the body
+    document.body.appendChild(clonedLogoutUl);
+  } else {
+    // Log a message if the element isn’t found (for debugging)
+    console.log('Logout element not found on this page.');
   }
-
+  
+  // Optional: Adjust the header styling (if relevant to your layout)
+  const mainLayoutHeader = document.querySelector('#mainlayout_header');
+  if (mainLayoutHeader) {
+    mainLayoutHeader.style.backgroundColor = 'white';
+    mainLayoutHeader.style.height = '60px';
+    mainLayoutHeader.style.minHeight = '60px';
+    mainLayoutHeader.style.maxHeight = '60px';
+    mainLayoutHeader.style.overflow = 'hidden';
+  }
+} catch (error) {
+  // Log any errors that occur
+  console.error('Error in logout element script:', error);
+}
   // Change mainlayout_header background color to white and reduce height
   if (mainLayoutHeader) {
     mainLayoutHeader.style.backgroundColor = 'white';
@@ -254,8 +277,8 @@ function modifyLayout() {
     mainLayoutHeader.style.overflow = 'hidden';
   }
 }
-
 modifyLayout();
+
 // Run the function when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', modifyLayout);
 

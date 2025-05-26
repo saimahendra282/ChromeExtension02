@@ -16,7 +16,6 @@ class ChatbotExtension {
   }
 
   async init() {
-    // Load state from chrome.storage
     const result = await chrome.storage.sync.get(['userId', 'chatState']);
     
     if (result.userId) {
@@ -26,7 +25,6 @@ class ChatbotExtension {
       this.chatState = { ...this.chatState, ...result.chatState, isOpen: false };
     }
 
-    // Get userId if not stored
     if (!this.userId) {
       this.userId = this.getUserIdFromDOM();
       if (this.userId) {
@@ -36,9 +34,7 @@ class ChatbotExtension {
       }
     }
 
-    // Check if we just navigated to CGPA page
     if (this.chatState.isWaitingForCGPA) {
-      console.log('Detected navigation to CGPA page, attempting extraction...');
       setTimeout(() => this.handleCGPAPageLoad(), 2000);
     }
 
@@ -48,28 +44,20 @@ class ChatbotExtension {
     this.setupLogoutListener();
     this.isInitialized = true;
 
-    // Auto-open chat on page load (always open)
     setTimeout(() => this.openChat(), 1000);
   }
 
-  // **Fixed: Setup logout button listener**
   setupLogoutListener() {
-    // Enhanced selectors to match various logout button patterns
     const logoutSelectors = [
-      // Original button selectors
       'button[type="submit"].btn.btn-link.logout.pull-right',
       'button.btn.btn-link.logout.pull-right',
       'button.logout',
-      // Cloned button selectors
       '#w0.navbar-nav.navbar-right.nav button[type="submit"].btn.btn-link.logout.pull-right',
       '#w0 button.logout',
-      // Fixed position selectors
       '[style*="position: fixed"][style*="top: 10px"][style*="right: 10px"] button.logout',
       '[style*="position: fixed"] button[type="submit"].logout',
-      // Generic fallbacks
       '.logout',
       'button[type="submit"]',
-      // Additional patterns
       'a[href*="logout"]',
       'a.logout',
       '[onclick*="logout"]',
@@ -77,33 +65,23 @@ class ChatbotExtension {
       'form[action*="logout"] input[type="submit"]'
     ];
 
-    // Function to attach listener to a button
     const attachListener = (element, selector) => {
       if (element && !element.hasAttribute('data-chat-logout-listener')) {
         element.setAttribute('data-chat-logout-listener', 'true');
-        
-        // Handle both click and form submission
         element.addEventListener('click', this.handleLogoutClick.bind(this));
-        
-        // If it's a form, also listen to form submission
         if (element.tagName.toLowerCase() === 'form') {
           element.addEventListener('submit', this.handleLogoutClick.bind(this));
         }
-        
-        // If it's inside a form, listen to the form as well
         const parentForm = element.closest('form');
         if (parentForm && !parentForm.hasAttribute('data-chat-logout-listener')) {
           parentForm.setAttribute('data-chat-logout-listener', 'true');
           parentForm.addEventListener('submit', this.handleLogoutClick.bind(this));
         }
-        
-        console.log(`Logout listener attached to: ${selector}`, element);
         return true;
       }
       return false;
     };
 
-    // Function to check if element is a logout element
     const isLogoutElement = (element) => {
       const text = element.textContent.toLowerCase();
       const className = element.className.toLowerCase();
@@ -111,7 +89,6 @@ class ChatbotExtension {
       const href = element.getAttribute('href') || '';
       const onclick = element.getAttribute('onclick') || '';
       const action = element.getAttribute('action') || '';
-      
       return (
         className.includes('logout') ||
         id.includes('logout') ||
@@ -126,10 +103,8 @@ class ChatbotExtension {
       );
     };
 
-    // Function to scan for logout buttons
     const scanForLogoutButtons = () => {
       let found = false;
-      
       logoutSelectors.forEach(selector => {
         try {
           const elements = document.querySelectorAll(selector);
@@ -140,13 +115,8 @@ class ChatbotExtension {
               }
             }
           });
-        } catch (e) {
-          // Ignore invalid selectors
-          console.warn(`Invalid selector: ${selector}`, e);
-        }
+        } catch (e) {}
       });
-      
-      // Additional scan for any element containing logout text
       const allButtons = document.querySelectorAll('button, a, input[type="submit"], form');
       allButtons.forEach(element => {
         if (isLogoutElement(element)) {
@@ -155,41 +125,23 @@ class ChatbotExtension {
           }
         }
       });
-      
       return found;
     };
 
-    // Initial scan
-    const initialFound = scanForLogoutButtons();
-    console.log(`Initial logout button scan found: ${initialFound}`);
+    scanForLogoutButtons();
+    setTimeout(() => scanForLogoutButtons(), 2000);
+    setTimeout(() => scanForLogoutButtons(), 5000);
 
-    // Delayed scan for dynamically loaded elements
-    setTimeout(() => {
-      const delayedFound = scanForLogoutButtons();
-      console.log(`Delayed logout button scan found: ${delayedFound}`);
-    }, 2000);
-
-    // Additional delayed scan for late-loading elements
-    setTimeout(() => {
-      const lateFound = scanForLogoutButtons();
-      console.log(`Late logout button scan found: ${lateFound}`);
-    }, 5000);
-
-    // MutationObserver to catch dynamically added logout buttons
     if (this.logoutObserver) {
       this.logoutObserver.disconnect();
     }
-
     this.logoutObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === 1) { // Element node
-            // Check if the node itself is a logout element
+          if (node.nodeType === 1) {
             if (isLogoutElement(node)) {
               attachListener(node, 'mutation observer - direct');
             }
-            
-            // Check for logout elements within the added node
             if (node.querySelectorAll) {
               logoutSelectors.forEach(selector => {
                 try {
@@ -199,12 +151,8 @@ class ChatbotExtension {
                       attachListener(element, `mutation observer - ${selector}`);
                     }
                   });
-                } catch (e) {
-                  // Ignore invalid selectors
-                }
+                } catch (e) {}
               });
-              
-              // Scan all buttons/links in the new node
               const allInteractiveElements = node.querySelectorAll('button, a, input[type="submit"], form');
               allInteractiveElements.forEach(element => {
                 if (isLogoutElement(element)) {
@@ -225,28 +173,13 @@ class ChatbotExtension {
     });
   }
 
-  // **Fixed: Handle logout click**
   handleLogoutClick(event) {
-    console.log('Logout button clicked, resetting chat...');
-    console.log('Event target:', event.target);
-    console.log('Event type:', event.type);
-    
-    // Reset chat immediately (don't wait for navigation)
     this.resetChat();
-    
-    // Optional: Add a small delay to ensure reset completes before navigation
-    // Note: We don't prevent default as we want the logout to proceed normally
-    setTimeout(() => {
-      console.log('Chat reset completed, logout will proceed normally');
-    }, 100);
+    setTimeout(() => {}, 100);
   }
 
-  // **Fixed: Reset chat function**
   async resetChat() {
-    console.log('Resetting chat state...');
-    
     try {
-      // Reset chat state
       this.chatState = {
         isOpen: false,
         messages: [],
@@ -254,45 +187,28 @@ class ChatbotExtension {
         isWaitingForCGPA: false,
         cgpaRetryCount: 0
       };
-
-      // Clear storage
       await chrome.storage.sync.remove(['chatState', 'userId']);
       this.userId = null;
-      console.log('Storage cleared');
-
-      // Clear chat messages UI
       if (this.chatMessages) {
         this.chatMessages.innerHTML = '';
-        console.log('Chat messages UI cleared');
       }
-
-      // Close chat if open
       if (this.chatWindow && this.chatWindow.style.display === 'flex') {
         this.closeChat();
-        console.log('Chat window closed');
       }
-
-      // Clean up logout observer
       if (this.logoutObserver) {
         this.logoutObserver.disconnect();
         this.logoutObserver = null;
-        console.log('Logout observer cleaned up');
       }
-
-      console.log('Chat reset completed successfully');
-    } catch (error) {
-      console.error('Error during chat reset:', error);
-    }
+    } catch (error) {}
   }
 
-  // **Setup Background Script Communication**
   setupMessageListener() {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.action === 'extractCGPA') {
-        this.extractCGPAFromCurrentPage().then(cgpa => {
+        extractCGPAFromCurrentPage().then(cgpa => {
           sendResponse({ cgpa: cgpa });
         });
-        return true; // Keep message channel open for async response
+        return true;
       }
     });
   }
@@ -314,13 +230,11 @@ class ChatbotExtension {
   }
 
   createChatElements() {
-    // Remove existing elements if they exist
     const existingButton = document.getElementById('chat-button');
     const existingWindow = document.getElementById('chat-window');
     if (existingButton) existingButton.remove();
     if (existingWindow) existingWindow.remove();
 
-    // Chat button
     this.chatButton = document.createElement('div');
     this.chatButton.id = 'chat-button';
     this.chatButton.innerHTML = `<img src="${this.getIconUrl()}" alt="Chat Icon" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">`;
@@ -330,7 +244,6 @@ class ChatbotExtension {
       transition: transform 0.2s ease;
     `;
 
-    // Chat window
     this.chatWindow = document.createElement('div');
     this.chatWindow.id = 'chat-window';
     this.chatWindow.style.cssText = `
@@ -339,7 +252,6 @@ class ChatbotExtension {
       box-shadow: 0 8px 25px rgba(0,0,0,0.3); flex-direction: column; z-index: 10001; overflow: hidden;
     `;
 
-    // Chat header
     const chatHeader = document.createElement('div');
     chatHeader.style.cssText = `
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -354,14 +266,12 @@ class ChatbotExtension {
       <button id="chat-close" style="background: none; border: none; color: white; cursor: pointer; font-size: 18px;">✖</button>
     `;
 
-    // Chat messages area
     this.chatMessages = document.createElement('div');
     this.chatMessages.id = 'chat-messages';
     this.chatMessages.style.cssText = `
       flex-grow: 1; padding: 15px; overflow-y: auto; font-size: 14px; line-height: 1.4;
     `;
 
-    // Chat input container
     const chatInputContainer = document.createElement('div');
     chatInputContainer.style.cssText = `
       display: flex; padding: 15px; border-top: 1px solid #e5e7eb; background-color: #f9fafb;
@@ -377,38 +287,30 @@ class ChatbotExtension {
       ">Send</button>
     `;
 
-    // Assemble chat window
     this.chatWindow.appendChild(chatHeader);
     this.chatWindow.appendChild(this.chatMessages);
     this.chatWindow.appendChild(chatInputContainer);
 
-    // Add to page
     document.body.appendChild(this.chatButton);
     document.body.appendChild(this.chatWindow);
 
-    // Restore messages
     this.restoreMessages();
   }
 
   getIconUrl() {
-    return chrome.runtime?.getURL('chat-icon.png') || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIzMCIgZmlsbD0iIzY2N2VlYSIvPjxwYXRoIGQ9Ik0zMCAzN1Y0M00zMCAzN0MyNi40ODUzNiAzNyAyMy41IDMzLjUxNDY0IDIzLjUgMzBDMjMuNSAyNi40ODUzNiAyNi40ODUzNiAyMyAzMCAyM1MzNi41IDI2LjQ4NTM2IDM2LjUgMzBDMzYuNSAzMy41MTQ2NCAzMy41MTQ2NCAzNyAzMCAzN1oiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIvPjwvc3ZnPg==';
+    return chrome.runtime?.getURL('chat-icon.png');
   }
 
   setupEventListeners() {
     this.chatButton.addEventListener('click', () => this.toggleChat());
-    
     const chatClose = this.chatWindow.querySelector('#chat-close');
     chatClose.addEventListener('click', () => this.closeChat());
-    
     const chatInput = this.chatWindow.querySelector('#chat-input');
     const chatSend = this.chatWindow.querySelector('#chat-send');
-    
     chatSend.addEventListener('click', () => this.sendMessage());
-    chatInput.addEventListener('keypress', (e) => { 
-      if (e.key === 'Enter') this.sendMessage(); 
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') this.sendMessage();
     });
-
-    // Hover effects
     this.chatButton.addEventListener('mouseenter', () => {
       this.chatButton.style.transform = 'scale(1.1)';
     });
@@ -425,7 +327,6 @@ class ChatbotExtension {
   openChat() {
     this.chatWindow.style.display = 'flex';
     this.chatState.isOpen = true;
-    
     if (!this.chatState.hasWelcomed) {
       setTimeout(() => {
         this.addBotMessage(`Namasthe ${this.userId} sishya! <br>want to know your CGPA? or anything<br>Just name it`);
@@ -433,7 +334,6 @@ class ChatbotExtension {
         this.saveChatState();
       }, 300);
     }
-    
     this.saveChatState();
     this.scrollToBottom();
   }
@@ -448,7 +348,6 @@ class ChatbotExtension {
     const chatInput = this.chatWindow.querySelector('#chat-input');
     const message = chatInput.value.trim();
     if (!message) return;
-    
     this.addUserMessage(message);
     chatInput.value = '';
     setTimeout(() => this.processMessage(message), 500);
@@ -485,7 +384,7 @@ class ChatbotExtension {
 
   processMessage(message) {
     const lowerMessage = message.toLowerCase();
-    if (lowerMessage.includes('cgpa') || lowerMessage.includes('gpa')) {
+    if (lowerMessage.includes('cgpa')) {
       this.handleCGPAQuery();
     } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
       this.addBotMessage('Namaskaram sishya, i am a chatbot created to assist you ');
@@ -496,57 +395,38 @@ class ChatbotExtension {
 
   async handleCGPAQuery() {
     this.addBotMessage('Fetching your CGPA... 🔍');
-    
-    // First try current page
-    let cgpa = await this.extractCGPAFromCurrentPage();
+    let cgpa = await extractCGPAFromCurrentPage();
     if (cgpa) {
       this.displayCGPA(cgpa);
       return;
     }
-
-    // Not found, need to navigate
-    const cgpaLink = this.findCGPALink();
+    const cgpaLink = findCGPALink();
     if (!cgpaLink) {
       this.addBotMessage('❌ No "My CGPA" link found. Please make sure you\'re on the ERP main page.');
       return;
     }
-
-    // Set up state for navigation
     this.chatState.isWaitingForCGPA = true;
     this.chatState.cgpaRetryCount = 0;
     this.saveChatState();
-
     this.addBotMessage('Navigating to CGPA page... ⏳<br><small>Please wait while the page loads...</small>');
-    
-    // Navigate (this will cause page refresh)
     setTimeout(() => {
       cgpaLink.click();
     }, 1000);
   }
 
-  // **This runs when we detect we're on the CGPA page after navigation**
   async handleCGPAPageLoad() {
-    console.log('Handling CGPA page load...');
-    
-    // Try to extract CGPA
-    const cgpa = await this.extractCGPAFromCurrentPage();
-    
+    const cgpa = await extractCGPAFromCurrentPage();
     if (cgpa) {
-      // Success!
       this.displayCGPA(cgpa);
       this.chatState.isWaitingForCGPA = false;
       this.saveChatState();
     } else {
-      // Retry logic
       this.chatState.cgpaRetryCount++;
-      
       if (this.chatState.cgpaRetryCount < this.maxRetries) {
         this.addBotMessage(`🔄 CGPA not found yet. Retrying... (${this.chatState.cgpaRetryCount}/${this.maxRetries})`);
         this.saveChatState();
-        
-        // Try clicking CGPA link again
         setTimeout(() => {
-          const cgpaLink = this.findCGPALink();
+          const cgpaLink = findCGPALink();
           if (cgpaLink) {
             cgpaLink.click();
           } else {
@@ -566,161 +446,12 @@ class ChatbotExtension {
     this.saveChatState();
   }
 
-  async extractCGPAFromCurrentPage() {
-    console.log('Extracting CGPA from current page...');
-    
-    // Wait for page to fully load
-    await this.wait(3000);
-    
-    // Multiple extraction strategies
-    let cgpa = null;
-    
-    // Strategy 1: CGPA sections
-    cgpa = this.extractFromCGPASection();
-    if (cgpa) return cgpa;
-    
-    // Strategy 2: Tables
-    cgpa = this.extractFromTables();
-    if (cgpa) return cgpa;
-    
-    // Strategy 3: Page text
-    cgpa = this.extractFromPageText();
-    if (cgpa) return cgpa;
-    
-    // Strategy 4: All elements with numbers
-    cgpa = this.extractFromNumericElements();
-    if (cgpa) return cgpa;
-    
-    return null;
-  }
-
-  extractFromCGPASection() {
-    const selectors = [
-      '.exam-student-course-external-total-consolidated-marks-info-index',
-      '[class*="cgpa"]',
-      '[class*="gpa"]',
-      '[id*="cgpa"]',
-      '[id*="gpa"]',
-      '.cgpa-section',
-      '.gpa-display'
-    ];
-    
-    for (const selector of selectors) {
-      const elements = document.querySelectorAll(selector);
-      for (const element of elements) {
-        const cgpa = this.findCGPAInText(element.textContent);
-        if (cgpa) return cgpa;
-      }
-    }
-    return null;
-  }
-
-  extractFromTables() {
-    const tables = document.querySelectorAll('table');
-    for (const table of tables) {
-      const text = table.textContent.toLowerCase();
-      if (text.includes('cgpa') || text.includes('gpa') || text.includes('grade point')) {
-        const cgpa = this.findCGPAInText(table.textContent);
-        if (cgpa) return cgpa;
-      }
-    }
-    return null;
-  }
-
-  extractFromPageText() {
-    const pageText = document.body.textContent;
-    return this.findCGPAInText(pageText);
-  }
-
-  extractFromNumericElements() {
-    const elements = document.querySelectorAll('*');
-    for (const element of elements) {
-      if (element.children.length === 0) {
-        const text = element.textContent.trim();
-        if (/\d+\.\d{1,2}/.test(text)) {
-          const cgpa = this.findCGPAInText(element.parentElement.textContent);
-          if (cgpa) return cgpa;
-        }
-      }
-    }
-    return null;
-  }
-
-  findCGPAInText(text) {
-    const patterns = [
-      /(?:cgpa|gpa)[\s:=]+(\d+\.?\d*)/i,
-      /(\d+\.\d{1,2})(?=.*(?:cgpa|gpa|grade.*point))/i,
-      /grade.*point.*average[\s:=]+(\d+\.?\d*)/i,
-      /(?:cgpa|gpa|grade|point|average)[\s\S]{0,50}?(\d+\.\d{1,2})/i,
-      /(\d+\.\d{1,2})[\s\S]{0,50}?(?:cgpa|gpa|grade.*point)/i
-    ];
-    
-    for (const pattern of patterns) {
-      const match = text.match(pattern);
-      if (match) {
-        const value = parseFloat(match[1]);
-        if (value >= 0 && value <= 10) {
-          return match[1];
-        }
-      }
-    }
-    
-    // Fallback pattern matching
-    const keywords = ['cgpa', 'gpa', 'grade', 'point', 'average'];
-    const numberRegex = /\b\d+\.\d{1,2}\b/g;
-    let match;
-    
-    while ((match = numberRegex.exec(text)) !== null) {
-      const num = parseFloat(match[0]);
-      if (num >= 0 && num <= 10) {
-        const start = Math.max(0, match.index - 100);
-        const end = Math.min(text.length, match.index + match[0].length + 100);
-        const surrounding = text.slice(start, end).toLowerCase();
-        
-        if (keywords.some(keyword => surrounding.includes(keyword))) {
-          return match[0];
-        }
-      }
-    }
-    
-    return null;
-  }
-
-  findCGPALink() {
-    const selectors = [
-      '#mainlayout_sidenav a',
-      '.sidebar a',
-      '.navigation a',
-      '.menu a',
-      'nav a',
-      'a[href*="cgpa"]',
-      'a[href*="searchgetmycgpa"]'
-    ];
-    
-    for (const selector of selectors) {
-      const links = document.querySelectorAll(selector);
-      for (const link of links) {
-        const text = link.textContent.trim().toLowerCase();
-        const href = link.getAttribute('href') || '';
-        
-        if (text.includes('my cgpa') || 
-            text.includes('cgpa') || 
-            href.includes('searchgetmycgpa') ||
-            href.includes('cgpa')) {
-          return link;
-        }
-      }
-    }
-    return null;
-  }
-
   displayCGPA(cgpaValue) {
     const messages = [
       ` <strong>Your CGPA is ${cgpaValue}</strong><br><br>Excellent work! Keep it up! ✨`,
       ` <strong>CGPA: ${cgpaValue}</strong><br><br>Great achievement! 🌟`,
       ` <strong>Your CGPA: ${cgpaValue}</strong><br><br>Outstanding performance! 🏆`
     ];
-    
     const randomMessage = messages[Math.floor(Math.random() * messages.length)];
     this.addBotMessage(randomMessage);
   }
@@ -751,7 +482,6 @@ class ChatbotExtension {
     this.scrollToBottom();
   }
 
- 
   scrollToBottom() {
     this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
   }
@@ -759,13 +489,8 @@ class ChatbotExtension {
   async saveChatState() {
     await chrome.storage.sync.set({ chatState: this.chatState });
   }
-
-  wait(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
 }
 
-// Add CSS animations
 const style = document.createElement('style');
 style.textContent = `
   @keyframes slideIn {
@@ -775,7 +500,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Initialize chatbot
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => new ChatbotExtension());
 } else {

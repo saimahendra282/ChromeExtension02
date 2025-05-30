@@ -302,7 +302,7 @@ class ChatbotExtension {
     chatHeader.innerHTML = `
       <div style="display: flex; align-items: center;">
         <div style="width: 8px; height: 8px; background-color: #4ade80; border-radius: 50%; margin-right: 8px;"></div>
-        <span>ERP Guru</span>
+        <span>ERP AI</span>
       </div>
       <button id="chat-close" style="background: none; border: none; color: white; cursor: pointer; font-size: 18px;">✖</button>
     `;

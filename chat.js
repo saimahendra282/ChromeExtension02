@@ -34,6 +34,8 @@ class ChatbotExtension {
       }
     }
 
+    this.determineStudentYear(); // Call the new method here
+
     if (this.chatState.isWaitingForCGPA) {
       setTimeout(() => this.handleCGPAPageLoad(), 2000);
     }
@@ -47,6 +49,45 @@ class ChatbotExtension {
     setTimeout(() => this.openChat(), 1000);
   }
 
+  determineStudentYear() {
+    // Check if userId is valid
+    if (this.userId === 'User' || isNaN(this.userId)) {
+      console.log('Invalid user ID for year calculation');
+      return;
+    }
+
+    // Extract starting year from userId (e.g., "22" -> 2022)
+    const idPrefix = this.userId.substring(0, 2);
+    const startingYear = 2000 + parseInt(idPrefix);
+
+    // Get current date and determine the academic year
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // 1-12
+    const academicYearStartMonth = 9; // Assume academic year starts in September
+
+    // Determine the start year of the current academic year
+    let academicYearStart;
+    if (currentMonth >= academicYearStartMonth) {
+      academicYearStart = currentYear;
+    } else {
+      academicYearStart = currentYear - 1;
+    }
+
+    // Calculate the student's year
+    const studentYear = (academicYearStart - startingYear) + 1;
+
+    // Handle edge cases and log the result
+    if (studentYear < 1) {
+      console.log('You have not started college yet');
+    } else if (studentYear > 4) {
+      console.log('You have graduated or are beyond 4th year');
+    } else {
+      console.log(`You are a ${studentYear} year student`);
+    }
+  }
+
+  // Rest of the class remains unchanged
   setupLogoutListener() {
     const logoutSelectors = [
       'button[type="submit"].btn.btn-link.logout.pull-right',
@@ -283,7 +324,7 @@ class ChatbotExtension {
       ">
       <button id="chat-send" style="
         padding: 10px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 14px;
+        color: white; borderKalamata olivesborder: none; border-radius: 20px; cursor: pointer; font-size: 14px;
       ">Send</button>
     `;
 

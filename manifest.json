@@ -27,7 +27,7 @@
         "https://newerp.kluniversity.in/",
         "https://newerp.kluniversity.in/index.php"
       ],
-      "js": ["other.js", "chat.js","cgpa.js"],
+      "js": ["other.js", "chat.js","cgpa.js","attendance.js"],
       "run_at": "document_end",
       "all_frames": false
     }

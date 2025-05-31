@@ -33,14 +33,13 @@
         const style = document.createElement('style');
         style.textContent = `
             @keyframes pulse {
-                0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,0,0,0.7); }
-                50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(255,0,0,0.9); }
-                100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,0,0,0.7); }
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
             }
             #creep-btn.active {
                 background: url('${bgURL}') center/cover, linear-gradient(45deg, #00ff00, #006600);
                 border-color: #006600;
-                box-shadow: 0 0 20px rgba(0,255,0,0.7);
             }
             .creepy-tooltip {
                 position: absolute;
@@ -62,35 +61,34 @@
                 text-align: center;
                 line-height: 1.4;
             }
-            @keyframes shake {
-                0%, 100% { transform: translate(0, 0) rotate(0); }
-                25% { transform: translate(-5px, -5px) rotate(-1deg); }
-                50% { transform: translate(5px, 5px) rotate(1deg); }
-                75% { transform: translate(-3px, 3px) rotate(-0.5deg); }
-            }
-            @keyframes glitch {
-                0% { filter: none; }
-                50% { filter: hue-rotate(90deg) contrast(150%); }
-                51% { filter: hue-rotate(-90deg) contrast(150%); }
-                100% { filter: none; }
-            }
-            @keyframes flicker {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0.8; }
+            @keyframes slowShake {
+                0%, 100% { transform: translate(0, 0); }
+                25% { transform: translate(-2px, -2px); }
+                50% { transform: translate(2px, 2px); }
+                75% { transform: translate(-1px, 1px); }
             }
             .creepy-mode {
-                animation: shake 0.5s infinite, glitch 0.3s infinite;
-                filter: contrast(120%);
-            }
-            .creepy-mode * {
-                animation: flicker 0.1s infinite;
+                animation: slowShake 3s infinite ease-in-out;
             }
             .creature {
                 position: fixed;
                 z-index: 9998;
                 pointer-events: none;
-                transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-                filter: contrast(120%) brightness(0.8);
+                transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+                transform-origin: center;
+            }
+            .creature.spawn {
+                animation: spawnCreature 0.5s ease-out;
+            }
+            @keyframes spawnCreature {
+                from {
+                    transform: scale(0);
+                    opacity: 0;
+                }
+                to {
+                    transform: scale(1);
+                    opacity: 1;
+                }
             }
             .roach { width: 10%; height: 10%; }
             .spider { width: 10%; height: 10%; }
@@ -113,59 +111,93 @@
             document.body.classList.add('creepy-mode');
             btn.classList.add('active');
             spawnCreatures();
+            startButtonSpawning();
         } else {
             document.body.classList.remove('creepy-mode');
             btn.classList.remove('active');
             creatures.forEach(c => c.remove());
             creatures = [];
+            if (buttonSpawnInterval) clearInterval(buttonSpawnInterval);
         }
+    }
+
+    let buttonSpawnInterval;
+
+    function startButtonSpawning() {
+        buttonSpawnInterval = setInterval(() => {
+            if (!creepyModeActive) return;
+            const buttons = Array.from(document.querySelectorAll('button, .btn, .button, input[type="button"], input[type="submit"]'));
+            if (buttons.length) {
+                const randomButton = buttons[Math.floor(Math.random() * buttons.length)];
+                const rect = randomButton.getBoundingClientRect();
+                spawnCreatureFromPosition(rect.left, rect.top);
+            }
+        }, 5000); // Spawn from random button every 5 seconds
+    }
+
+    function spawnCreatureFromPosition(x, y) {
+        const roachURL = chrome.runtime.getURL('roach.gif');
+        const spiderURL = chrome.runtime.getURL('spider.gif');
+        
+        const isSpider = Math.random() > 0.5;
+        const creature = document.createElement('img');
+        creature.src = isSpider ? spiderURL : roachURL;
+        creature.className = `creature ${isSpider ? 'spider' : 'roach'} spawn`;
+        
+        creature.style.left = `${x}px`;
+        creature.style.top = `${y}px`;
+        
+        document.body.appendChild(creature);
+        creatures.push(creature);
+
+        // Start random movement after spawn
+        setTimeout(() => {
+            creature.classList.remove('spawn');
+            setInterval(() => {
+                if (creepyModeActive) {
+                    positionCreature(creature);
+                }
+            }, 2000 + Math.random() * 1000);
+        }, 500);
     }
 
     function spawnCreatures() {
         if (!creepyModeActive) return;
-
-        const roachURL = chrome.runtime.getURL('roach.gif');
-        const spiderURL = chrome.runtime.getURL('spider.gif');
         
         function spawnBatch() {
             if (!creepyModeActive) return;
             
-            // Spawn 5 creatures
             for (let i = 0; i < 5; i++) {
                 setTimeout(() => {
                     if (!creepyModeActive) return;
-
-                    const isSpider = Math.random() > 0.5;
-                    const creature = document.createElement('img');
-                    creature.src = isSpider ? spiderURL : roachURL;
-                    creature.className = `creature ${isSpider ? 'spider' : 'roach'}`;
-                    
-                    positionCreature(creature);
-                    document.body.appendChild(creature);
-                    creatures.push(creature);
-
-                    // Animate movement
-                    setInterval(() => {
-                        if (creepyModeActive) {
-                            positionCreature(creature);
-                        }
-                    }, 2000 + Math.random() * 1000);
-
+                    // Random edge spawn
+                    const edge = Math.floor(Math.random() * 4);
+                    let x, y;
+                    switch(edge) {
+                        case 0: // top
+                            x = Math.random() * window.innerWidth;
+                            y = -50;
+                            break;
+                        case 1: // right
+                            x = window.innerWidth + 50;
+                            y = Math.random() * window.innerHeight;
+                            break;
+                        case 2: // bottom
+                            x = Math.random() * window.innerWidth;
+                            y = window.innerHeight + 50;
+                            break;
+                        case 3: // left
+                            x = -50;
+                            y = Math.random() * window.innerHeight;
+                            break;
+                    }
+                    spawnCreatureFromPosition(x, y);
                 }, i * 200);
             }
         }
 
-        // Initial spawn
         spawnBatch();
-        
-        // Spawn every 20 seconds
-        const spawnInterval = setInterval(() => {
-            if (!creepyModeActive) {
-                clearInterval(spawnInterval);
-                return;
-            }
-            spawnBatch();
-        }, 20000);
+        setInterval(spawnBatch, 20000);
     }
 
     function positionCreature(creature) {

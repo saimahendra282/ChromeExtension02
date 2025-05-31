@@ -68,7 +68,7 @@
                 bunkBtn.style.marginLeft = '5px';
                 bunkBtn.style.fontSize = '11px';
                 bunkBtn.style.padding = '2px 6px';
-                bunkBtn.innerHTML = 'Bunk Calc';
+                bunkBtn.innerHTML = 'Bunk Calci';
                 bunkBtn.setAttribute('data-row-index', index);
                 
                 // Add event listener

@@ -62,13 +62,15 @@
                 line-height: 1.4;
             }
             @keyframes slowShake {
-                0%, 100% { transform: translate(0, 0); }
-                25% { transform: translate(-2px, -2px); }
-                50% { transform: translate(2px, 2px); }
-                75% { transform: translate(-1px, 1px); }
+                0% { transform: translate(0, 0) rotate(0deg); }
+                25% { transform: translate(-85px, 6px) rotate(-2deg); }
+                50% { transform: translate(0, -4px) rotate(0deg); }
+                75% { transform: translate(85px, 6px) rotate(2deg); }
+                100% { transform: translate(0, 0) rotate(0deg); }
             }
             .creepy-mode {
-                animation: slowShake 3s infinite ease-in-out;
+                animation: slowShake 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                transform-origin: center center;
             }
             .creature {
                 position: fixed;

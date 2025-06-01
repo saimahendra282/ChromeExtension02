@@ -6,6 +6,7 @@ Anyway, if you want to try this extension, first download this repo.
 
 **Then follow these steps:**
 - download this git repo or you can even clone it 
+- next you have to your own gemini api key
 - Open Chrome and go to the **Extensions** page.
 - ![image](https://github.com/user-attachments/assets/9cf39eb2-cc61-4186-8df0-019ff426fd58)
 - In the top-right corner, enable **Developer mode**.

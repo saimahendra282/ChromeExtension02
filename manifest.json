@@ -27,14 +27,21 @@
         "https://newerp.kluniversity.in/",
         "https://newerp.kluniversity.in/index.php"
       ],
-      "js": ["other.js", "chat.js", "cgpa.js", "attendance.js", "creep.js"],
+      "js": [
+        "env.js",
+        "gemini-ai.js",
+        "other.js",
+        "attendance.js",
+        "creep.js",
+        "gemini.js"
+      ],
       "run_at": "document_end",
       "all_frames": false
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["back.png", "runner.gif", "slava.mp3", "background_music.mp3", "chat.html", "chat-icon.png", "roach.gif", "spider.gif", "creepybg.png"],
+      "resources": [".env", "back.png", "runner.gif", "slava.mp3", "background_music.mp3", "chat.html", "chat-icon.png", "roach.gif", "spider.gif", "creepybg.png"],
       "matches": ["https://newerp.kluniversity.in/*"]
     }
   ],

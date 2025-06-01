@@ -34,13 +34,16 @@ Anyway, if you want to try this extension, first download this repo.
   ![image](https://github.com/user-attachments/assets/3caa3f87-0964-4bb4-9c3c-365843dd0195)  
   ![image](https://github.com/user-attachments/assets/a73758c3-9d0c-468d-9ed6-8460b84f7f21)
 
----
-
-<h2 align="center">Congrats visitor, you have unlocked your own browser extension 🗣️🗣️🎊</h2>
-
-<h3 align="center">Got any suggestions? Drop them in the Issues section.</h3>
-
----
+### Features:
+- New landing page
+  ![image](https://github.com/user-attachments/assets/4026330a-2c62-46e1-9ce9-57ca7839995d)
+- updated css for home page
+- added small prank button
+- added music player
+- check your average attendence with one click , added button to calculate average attendence and more in attendece register page
+  ![image](https://github.com/user-attachments/assets/04cd1480-6bce-4473-9c46-60f7a94f3ec1)
+- added ai support just select the text or question u wanted and ask ai instantly
+  ![Untitled design](https://github.com/user-attachments/assets/0c1f979b-fabf-463e-8032-02ea7aae2de0)
 
 ### TO-DO:
 
@@ -52,6 +55,11 @@ Anyway, if you want to try this extension, first download this repo.
 
 ---
 
+<h2 align="center">Congrats visitor, you have unlocked your own browser extension 🗣️🗣️🎊</h2>
+
+<h3 align="center">Got any suggestions? Drop them in the Issues section.</h3>
+
+---
 ### 📝 Small Note
 
 **THIS repo updates continuously, and please don’t be offended if you don’t like the CSS — I like it 😄**

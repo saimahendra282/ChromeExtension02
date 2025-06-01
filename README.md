@@ -96,6 +96,6 @@ Anyway, if you want to try this extension, first download this repo.
 
 ### 📝 Small Note
 
-**THIS repo updates continuously, and please don’t be offended if you don’t like the CSS — I like it 😄**
+**Please don’t be offended if you don’t like the theme — I like it 😄 THIS repo updates continuously,so it is better to update your extension weekly**
 
 <h3>If you liked my work please star this repo</h3>

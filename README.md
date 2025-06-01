@@ -42,6 +42,16 @@ Anyway, if you want to try this extension, first download this repo.
 
 ---
 
+### TO-DO:
+
+- [ ] Add image support to Gemini API  
+- [ ] Fix the small errors  
+- [ ] Add more insect GIFs and update the shaking animation  
+- [ ] Change the CSS of the sidebar  
+- [ ] Change the home page UI and add a dynamically placed logout button  
+
+---
+
 ### 📝 Small Note
 
 **THIS repo updates continuously, and please don’t be offended if you don’t like the CSS — I like it 😄**

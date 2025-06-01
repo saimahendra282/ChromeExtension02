@@ -6,7 +6,14 @@ Anyway, if you want to try this extension, first download this repo.
 
 **Then follow these steps:**
 - download this git repo or you can even clone it 
-- next you have to your own gemini api key
+- next you have to add  your own gemini api key
+- for creating api key follow these steps or you can even refer online if you cant understand this
+- first go to [https://aistudio.google.com/]
+- next sign in or create your account and then you can find this get api button on top right corner click it
+- ![image](https://github.com/user-attachments/assets/3492ff89-a121-4347-b248-b1a2af94231a)
+- then click on create api key button
+- ![image](https://github.com/user-attachments/assets/fc3000b8-81b9-4c59-9597-bcad97f5c9b2)
+- after creating you can copy the key and come back to the git repo folder and add the api key in .env file with GEMINI_API_KEY= variable
 - Open Chrome and go to the **Extensions** page.
 - ![image](https://github.com/user-attachments/assets/9cf39eb2-cc61-4186-8df0-019ff426fd58)
 - In the top-right corner, enable **Developer mode**.

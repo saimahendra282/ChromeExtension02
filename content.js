@@ -184,7 +184,7 @@ function addFollowCheckbox() {
   checkboxContainer.className = 'form-group follow-checkbox-container';
   checkboxContainer.innerHTML = `
     <label>
-      <input type="checkbox" id="follow-checkbox"> Did u followed on <a href="https://www.linkedin.com/in/bejawada-sai-mahendra-b18289212/" style="text-decoration: none;color:black;" target="_blank">linkedin</a> ?
+      <input type="checkbox" id="follow-checkbox">  following me on <a href="https://www.linkedin.com/in/bejawada-sai-mahendra-b18289212/" style="text-decoration: none;color:black;" target="_blank">linkedin</a> ?
     </label>
   `;
 

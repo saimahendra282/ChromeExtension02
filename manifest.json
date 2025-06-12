@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Custom CSS for ERP",
-  "version": "1.5",
-  "description": "Added bg img, removed footer, added music player and chatbot inside the ERP, and many more",
+  "version": "2.0",
+  "description": "Added bg img, removed footer, added music player and chatbot inside the ERP,Modified home screen and many more",
   "author": "Bejawada Sai Mahendra",
   "permissions": [
     "activeTab",

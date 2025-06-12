@@ -239,70 +239,228 @@ function createCardLayout() {
   const userIdElement = document.querySelector('.mainlayout_user #loggedIn');
   const userId = userIdElement ? userIdElement.textContent.trim() : '';
 
-  // Create main card container
+  // Determine tag color based on first 2 digits of ID
+  const firstTwoDigits = userId.substring(0, 2);
+  let tagColor = '#FFD700'; // default yellow
+  
+  switch(firstTwoDigits) {
+    case '22':
+      tagColor = '#ecec18'; // yellow
+      break;
+    case '23':
+      tagColor = '#e7191f'; // red
+      break;
+    case '24':
+      tagColor = '#0000ff'; // teal
+      break;
+    default:
+      tagColor = '#ffff00'; // default yellow
+      break;
+  }
+
+  // Create lanyard container
+  const lanyardContainer = document.createElement('div');
+  lanyardContainer.style.cssText = `
+    position: relative;
+    margin: 20px auto;
+    max-width: 400px;
+    padding-top: 60px;
+  `;
+
+  // Create realistic fabric lanyard
+  const lanyard = document.createElement('div');
+  lanyard.style.cssText = `
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15px;
+    height: 60px;
+    background: repeating-linear-gradient(
+      90deg,
+      #2c3e50 0px,
+      #2c3e50 2px,
+      #34495e 2px,
+      #34495e 4px,
+      #2c3e50 4px,
+      #2c3e50 6px,
+      #34495e 6px,
+      #34495e 8px
+    );
+    border: 1px solid #1a252f;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 5;
+  `;
+
+  // Create lanyard clip/hook
+  const lanyardClip = document.createElement('div');
+  lanyardClip.style.cssText = `
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 6px;
+    background: #555;
+    border-radius: 2px 2px 0 0;
+    border: 1px solid #333;
+    z-index: 6;
+  `;
+
+  // Create metal ring
+  const metalRing = document.createElement('div');
+  metalRing.style.cssText = `
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    border: 2px solid #666;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #888, #aaa, #888);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 6;
+  `;
+
+  // Create main ID card container
   const cardContainer = document.createElement('div');
   cardContainer.style.cssText = `
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 20px;
-    margin: 20px auto;
-    max-width: 600px;
-    height: 200px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 300px;
+    height: 450px;
+    box-shadow: 
+      0 8px 32px rgba(0,0,0,0.15),
+      0 4px 16px rgba(0,0,0,0.1),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+    border: 3px solid ${tagColor};
     display: flex;
+    flex-direction: column;
     overflow: hidden;
+    position: relative;
+    margin: 0 auto;
+  `;
+
+  // Create card hole for lanyard
+  const cardHole = document.createElement('div');
+  cardHole.style.cssText = `
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: #ddd;
+    border-radius: 50%;
+    border: 1px solid #bbb;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+    z-index: 10;
+  `;
+
+  // Create header section
+  const headerSection = document.createElement('div');
+  headerSection.style.cssText = `
+    background: linear-gradient(135deg, ${tagColor} 0%, ${tagColor}dd 100%);
+    padding: 20px 15px 10px 15px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    border-bottom: 2px solid rgba(255,255,255,0.2);
+  `;
+
+  headerSection.innerHTML = `
+    <div style="font-size: 12px; margin-bottom: 5px; opacity: 0.9;">STUDENT ID CARD</div>
+  `;
+
+  // Create main content area
+  const mainContent = document.createElement('div');
+  mainContent.style.cssText = `
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px 15px 15px;
+    gap: 15px;
+    align-items: center;
+    justify-content: flex-start;
+  `;
+
+  // Create photo and ID section
+  const photoIdSection = document.createElement('div');
+  photoIdSection.style.cssText = `
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+  `;
+
+  // Create realistic photo container with border
+  const photoContainer = document.createElement('div');
+  photoContainer.style.cssText = `
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    border: 3px solid #e0e0e0;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 
+      0 4px 12px rgba(0,0,0,0.15),
+      inset 0 1px 0 rgba(255,255,255,0.5);
     position: relative;
   `;
 
-  // Create left section (user info)
-  const leftSection = document.createElement('div');
-  leftSection.style.cssText = `
-    flex: 2;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: rgba(255,255,255,0.1);
-    border-right: 2px solid rgba(255,255,255,0.3);
+  // Add photo corner effect
+  const photoCorner = document.createElement('div');
+  photoCorner.style.cssText = `
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-top: 8px solid rgba(255,255,255,0.3);
+    z-index: 2;
   `;
 
-  leftSection.innerHTML = `
-    <div style="text-align: center;">
-      <img src="${userImgSrc}" style="
-        width: 80px; 
-        height: 80px; 
-        border-radius: 50%; 
-        border: 3px solid white;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        margin-bottom: 15px;
-      " alt="User Photo">
-      <p style="
-        color: rgba(255,255,255,0.9); 
-        margin: 0; 
-        font-size: 16px;
-        font-weight: 600;
-        background: rgba(0,0,0,0.2);
-        padding: 8px 12px;
-        border-radius: 10px;
-        display: inline-block;
-        letter-spacing: 1px;
-      ">${userId}</p>
-    </div>
+  const userPhoto = document.createElement('img');
+  userPhoto.src = userImgSrc;
+  userPhoto.style.cssText = `
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   `;
 
-  // Create right section (stats grid)
-  const rightSection = document.createElement('div');
-  rightSection.style.cssText = `
-    flex: 1;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 15px;
-    align-items: center;
-    justify-items: center;
+  photoContainer.appendChild(userPhoto);
+  photoContainer.appendChild(photoCorner);
+
+  // Create ID number display
+  const idContainer = document.createElement('div');
+  idContainer.style.cssText = `
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 2px solid #dee2e6;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+    letter-spacing: 2px;
+    box-shadow: 
+      0 3px 8px rgba(0,0,0,0.1),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+    font-family: 'Courier New', monospace;
   `;
+  idContainer.textContent = userId;
+
+  photoIdSection.appendChild(photoContainer);
+  photoIdSection.appendChild(idContainer);
 
   // Get counts from the original HTML elements
   const originalSections = originalRow.querySelectorAll('.col-lg-3');
@@ -325,71 +483,130 @@ function createCardLayout() {
     }
   ];
 
-  sections.forEach((section) => {
-    const circleCard = document.createElement('div');
-    circleCard.style.cssText = `
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.15);
-      border: 2px solid rgba(255,255,255,0.3);
+  // Create enhanced stats container
+  const statsContainer = document.createElement('div');
+  statsContainer.style.cssText = `
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 12px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+    box-shadow: 
+      0 4px 12px rgba(0,0,0,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+    width: 100%;
+    max-width: 280px;
+    border: 1px solid #e9ecef;
+  `;
+
+  sections.forEach((section, index) => {
+    const statItem = document.createElement('div');
+    statItem.style.cssText = `
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: all 0.3s ease;
-      backdrop-filter: blur(5px);
+      padding: 10px 8px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border: 1.5px solid #e9ecef;
+      box-shadow: 
+        0 2px 8px rgba(0,0,0,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.8);
       position: relative;
+      overflow: hidden;
     `;
 
-    circleCard.innerHTML = `
+    // Add subtle pattern overlay
+    const pattern = document.createElement('div');
+    pattern.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
+      pointer-events: none;
+    `;
+
+    statItem.innerHTML = `
       <div style="
-        font-size: 16px; 
-        color: white; 
+        font-size: 18px; 
+        color: #2c3e50; 
         font-weight: bold;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        margin-bottom: 2px;
+        margin-bottom: 4px;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
       ">${section.count}</div>
       <div style="
         font-size: 8px; 
-        color: rgba(255,255,255,0.9); 
+        color: #7f8c8d; 
         text-align: center;
-        line-height: 1;
+        line-height: 1.2;
         font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       ">${section.title}</div>
     `;
 
-    // Add hover and click effects
-    circleCard.addEventListener('mouseenter', () => {
-      circleCard.style.transform = 'scale(1.1)';
-      circleCard.style.background = 'rgba(255,255,255,0.25)';
-      circleCard.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
+    statItem.appendChild(pattern);
+
+    // Enhanced hover effects
+    statItem.addEventListener('mouseenter', () => {
+      statItem.style.transform = 'translateY(-2px) scale(1.02)';
+      statItem.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
+      statItem.style.boxShadow = '0 6px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8)';
     });
 
-    circleCard.addEventListener('mouseleave', () => {
-      circleCard.style.transform = 'scale(1)';
-      circleCard.style.background = 'rgba(255,255,255,0.15)';
-      circleCard.style.boxShadow = 'none';
+    statItem.addEventListener('mouseleave', () => {
+      statItem.style.transform = 'translateY(0) scale(1)';
+      statItem.style.background = 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)';
+      statItem.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)';
     });
 
-    circleCard.addEventListener('click', () => {
-      circleCard.style.transform = 'scale(0.95)';
+    statItem.addEventListener('click', () => {
+      statItem.style.transform = 'translateY(1px) scale(0.98)';
       setTimeout(() => {
-        circleCard.style.transform = 'scale(1.1)';
+        statItem.style.transform = 'translateY(-2px) scale(1.02)';
       }, 100);
     });
 
-    rightSection.appendChild(circleCard);
+    statsContainer.appendChild(statItem);
   });
 
-  cardContainer.appendChild(leftSection);
-  cardContainer.appendChild(rightSection);
+  // Create footer with security features
+  const footer = document.createElement('div');
+  footer.style.cssText = `
+    background: linear-gradient(135deg, ${tagColor}22 0%, ${tagColor}11 100%);
+    padding: 10px 15px;
+    text-align: center;
+    border-top: 1px solid ${tagColor}44;
+    font-size: 9px;
+    color: #666;
+    font-style: italic;
+  `;
 
+  // Assemble the card
+  cardContainer.appendChild(cardHole);
+  cardContainer.appendChild(headerSection);
+  mainContent.appendChild(photoIdSection);
+  mainContent.appendChild(statsContainer);
+  cardContainer.appendChild(mainContent);
+  cardContainer.appendChild(footer);
+
+  // Assemble lanyard
+  lanyard.appendChild(lanyardClip);
+  lanyard.appendChild(metalRing);
+  lanyardContainer.appendChild(lanyard);
+  lanyardContainer.appendChild(cardContainer);
+
+  // Replace original content
   originalRow.style.display = 'none';
-  originalRow.parentNode.insertBefore(cardContainer, originalRow.nextSibling);
+  originalRow.parentNode.insertBefore(lanyardContainer, originalRow.nextSibling);
 }
-
 function initMusicPlayer() {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {

@@ -10,20 +10,16 @@ let playerContainer = null;
 function createMusicPlayer() {
   if (document.querySelector('#music-player')) return;
 
-  // Select the first div
   const firstDiv = document.querySelector('.col-sm-4.col-md-4.col-lg-3[style*="float:left"]');
   if (!firstDiv) return;
 
-  // Select the second div and verify it's the next sibling
   const secondDiv = firstDiv.nextElementSibling;
   if (!secondDiv || !secondDiv.classList.contains('col-sm-6') || 
       !secondDiv.classList.contains('col-md-6') || 
       !secondDiv.classList.contains('col-lg-7')) return;
 
-  // Find the user info div (third div)
   const userDiv = document.querySelector('.col-sm-2.col-md-2.col-lg-2[style*="display: flex"]');
   
-  // Create a wrapper container to hold both music player and user info
   const wrapperContainer = document.createElement('div');
   wrapperContainer.style.cssText = `
     display: flex;
@@ -33,18 +29,14 @@ function createMusicPlayer() {
     gap: 20px;
   `;
 
-  // Create the player container with initial size
   playerContainer = document.createElement('div');
   playerContainer.id = 'music-player';
   
-  // Initial styling - will be updated dynamically
-  updatePlayerSize(0); // Start with 0 buttons
+  updatePlayerSize(0);
 
-  // Remove duplicates from musicFiles array
   const uniqueMusicFiles = [...new Set(musicFiles)];
   let validSongsCount = 0;
 
-  // Create buttons for each unique track
   uniqueMusicFiles.forEach((file, index) => {
     const testAudio = new Audio(chrome.runtime.getURL(file));
     testAudio.addEventListener('canplaythrough', () => {
@@ -61,13 +53,10 @@ function createMusicPlayer() {
   function updatePlayerSize(buttonCount) {
     if (!playerContainer) return;
     
-    // Calculate dynamic width based on number of buttons
     const baseWidth = 40;
     const buttonWidth = 32;
     const gapWidth = 6;
     const totalWidth = baseWidth + (buttonCount * buttonWidth) + ((buttonCount - 1) * gapWidth);
-    
-    // Minimum width of 60px, maximum reasonable width
     const finalWidth = Math.max(60, Math.min(totalWidth, 400));
     
     playerContainer.style.cssText = `
@@ -109,14 +98,10 @@ function createMusicPlayer() {
       flex-shrink: 0;
     `;
 
-    button.addEventListener('click', () => {
-      playTrack(trackIndex);
-    });
-
+    button.addEventListener('click', () => playTrack(trackIndex));
     button.addEventListener('mouseenter', () => {
       button.style.background = 'rgba(255,255,255,0.4)';
     });
-
     button.addEventListener('mouseleave', () => {
       button.style.background = 'rgba(255,255,255,0.2)';
     });
@@ -124,20 +109,15 @@ function createMusicPlayer() {
     playerContainer.appendChild(button);
   }
 
-  // Remove the second div and replace the first div with wrapper containing both player and user info
   secondDiv.remove();
-  
-  // Add music player to wrapper
   wrapperContainer.appendChild(playerContainer);
   
-  // Add user info to wrapper (if it exists)
   if (userDiv) {
     const userDivClone = userDiv.cloneNode(true);
     wrapperContainer.appendChild(userDivClone);
     userDiv.remove();
   }
   
-  // Replace first div with wrapper
   firstDiv.parentNode.replaceChild(wrapperContainer, firstDiv);
 }
 
@@ -173,22 +153,9 @@ function hideFooter() {
     footer.style.display = 'none';
   }
 }
-hideFooter();
 
 function modifyLayout() {
-  // Add image to text-center div
-  const textCenterDiv = document.querySelector('.text-center[style*="font-size:20px;margin-top:30px;"]');
-  const userImg = document.querySelector('.col-sm-2.col-md-2.col-lg-2 .mainlayout_user img');
-  if (textCenterDiv && userImg) {
-    const clonedImg = userImg.cloneNode(true);
-    clonedImg.style.width = '30px';
-    clonedImg.style.height = '30px';
-    clonedImg.style.borderRadius = '50%';
-    clonedImg.style.marginRight = '10px';
-    textCenterDiv.insertBefore(clonedImg, textCenterDiv.firstChild);
-  }
-
-  // Make navbar transparent and hide it
+  // Hide navbar
   const navbar = document.querySelector('.navbar-inverse.navbar');
   if (navbar) {
     navbar.style.setProperty('background-color', 'transparent', 'important');
@@ -196,119 +163,278 @@ function modifyLayout() {
     navbar.style.display = 'none';
   }
 
-  // Change logout button color to black
+  // Style logout button
   const logoutButton = document.querySelector('.btn.btn-link.logout');
   if (logoutButton) {
     logoutButton.style.color = 'black';
   }
 
-  // Hide brand_logo
+  // Hide brand logo
   const brandLogo = document.querySelector('#brand_logo');
   if (brandLogo) {
     brandLogo.style.display = 'none';
   }
 
-  // Hide the specific div with col-sm-2 col-md-2 col-lg-2 classes and flex styles
+  // Hide target div
   const targetDiv = document.querySelector('.col-sm-2.col-md-2.col-lg-2[style*="display: flex"][style*="align-items: center"][style*="justify-content: end"]');
   if (targetDiv) {
     targetDiv.style.display = 'none';
   }
 
-  // Hide navbar-collapse
+  // Hide navbar collapse
   const navbarCollapse = document.querySelector('#navbar-collapse.collapse.navbar-collapse');
   if (navbarCollapse) {
     navbarCollapse.style.display = 'none';
   }
 
-  // Copy logout ul and place it at top right corner of the entire webpage
-  const logoutUl = document.querySelector('#w0.navbar-nav.navbar-right.nav');
-  const mainLayoutHeader = document.querySelector('#mainlayout_header');
+  // Move logout to top-right corner
+  try {
+    const logoutUl = document.querySelector('#w0.navbar-nav.navbar-right.nav');
+    
+    if (logoutUl) {
+      const clonedLogoutUl = logoutUl.cloneNode(true);
+      logoutUl.style.display = 'none';
+      
+      clonedLogoutUl.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 9999;
+        background-color: transparent;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      `;
+      
+      document.body.appendChild(clonedLogoutUl);
+    }
+    
+    // Style header
+    const mainLayoutHeader = document.querySelector('#mainlayout_header');
+    if (mainLayoutHeader) {
+      mainLayoutHeader.style.backgroundColor = 'white';
+      mainLayoutHeader.style.height = '60px';
+      mainLayoutHeader.style.minHeight = '60px';
+      mainLayoutHeader.style.maxHeight = '60px';
+      mainLayoutHeader.style.overflow = 'hidden';
+    }
+  } catch (error) {
+    console.error('Error in logout element script:', error);
+  }
+}
 
- try {
-  // Select the logout element
-  const logoutUl = document.querySelector('#w0.navbar-nav.navbar-right.nav');
-  
-  // Check if the logout element exists
-  if (logoutUl) {
-    // Clone the logout element
-    const clonedLogoutUl = logoutUl.cloneNode(true);
-    
-    // Hide the original element to avoid duplication
-    logoutUl.style.display = 'none';
-    
-    // Style the cloned element to appear in the top-right corner
-    clonedLogoutUl.style.cssText = `
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 9999;
-      background-color: transparent;
-      margin: 0;
-      padding: 0;
-      list-style: none;
+function createCardLayout() {
+  const originalRow = document.querySelector('.row[style*="margin-top:70px"]');
+  if (!originalRow) return;
+
+  // Hide welcome message
+  const welcomeDiv = document.querySelector('.text-center[style*="font-size:20px"][style*="margin-top:30px"]');
+  if (welcomeDiv) {
+    welcomeDiv.style.display = 'none';
+  }
+
+  // Get user data
+  const userImg = document.querySelector('.col-sm-2.col-md-2.col-lg-2 .mainlayout_user img');
+  const userImgSrc = userImg ? userImg.src : '';
+  const userIdElement = document.querySelector('.mainlayout_user #loggedIn');
+  const userId = userIdElement ? userIdElement.textContent.trim() : '';
+
+  // Create main card container
+  const cardContainer = document.createElement('div');
+  cardContainer.style.cssText = `
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+    height: 200px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    display: flex;
+    overflow: hidden;
+    position: relative;
+  `;
+
+  // Create left section (user info)
+  const leftSection = document.createElement('div');
+  leftSection.style.cssText = `
+    flex: 2;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255,255,255,0.1);
+    border-right: 2px solid rgba(255,255,255,0.3);
+  `;
+
+  leftSection.innerHTML = `
+    <div style="text-align: center;">
+      <img src="${userImgSrc}" style="
+        width: 80px; 
+        height: 80px; 
+        border-radius: 50%; 
+        border: 3px solid white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        margin-bottom: 15px;
+      " alt="User Photo">
+      <p style="
+        color: rgba(255,255,255,0.9); 
+        margin: 0; 
+        font-size: 16px;
+        font-weight: 600;
+        background: rgba(0,0,0,0.2);
+        padding: 8px 12px;
+        border-radius: 10px;
+        display: inline-block;
+        letter-spacing: 1px;
+      ">${userId}</p>
+    </div>
+  `;
+
+  // Create right section (stats grid)
+  const rightSection = document.createElement('div');
+  rightSection.style.cssText = `
+    flex: 1;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 15px;
+    align-items: center;
+    justify-items: center;
+  `;
+
+  // Get counts from the original HTML elements
+  const originalSections = originalRow.querySelectorAll('.col-lg-3');
+  const sections = [
+    { 
+      title: 'Journals', 
+      count: originalSections[0]?.querySelector('.count')?.textContent || '0' 
+    },
+    { 
+      title: 'Awards', 
+      count: originalSections[1]?.querySelector('.count')?.textContent || '0' 
+    },
+    { 
+      title: 'Seminars', 
+      count: originalSections[2]?.querySelector('.count')?.textContent || '0' 
+    },
+    { 
+      title: 'Projects', 
+      count: originalSections[3]?.querySelector('.count')?.textContent || '0' 
+    }
+  ];
+
+  sections.forEach((section) => {
+    const circleCard = document.createElement('div');
+    circleCard.style.cssText = `
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      position: relative;
     `;
-    
-    // Append the cloned element to the body
-    document.body.appendChild(clonedLogoutUl);
-  } else {
-    // Log a message if the element isn’t found (for debugging)
-    console.log('Logout element not found on this page.');
-  }
-  
-  // Optional: Adjust the header styling (if relevant to your layout)
-  const mainLayoutHeader = document.querySelector('#mainlayout_header');
-  if (mainLayoutHeader) {
-    mainLayoutHeader.style.backgroundColor = 'white';
-    mainLayoutHeader.style.height = '60px';
-    mainLayoutHeader.style.minHeight = '60px';
-    mainLayoutHeader.style.maxHeight = '60px';
-    mainLayoutHeader.style.overflow = 'hidden';
-  }
-} catch (error) {
-  // Log any errors that occur
-  console.error('Error in logout element script:', error);
-}
-  // Change mainlayout_header background color to white and reduce height
-  if (mainLayoutHeader) {
-    mainLayoutHeader.style.backgroundColor = 'white';
-    mainLayoutHeader.style.height = '60px';
-    mainLayoutHeader.style.minHeight = '60px';
-    mainLayoutHeader.style.maxHeight = '60px';
-    mainLayoutHeader.style.overflow = 'hidden';
-  }
-}
-modifyLayout();
 
-// Run the function when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', modifyLayout);
+    circleCard.innerHTML = `
+      <div style="
+        font-size: 16px; 
+        color: white; 
+        font-weight: bold;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        margin-bottom: 2px;
+      ">${section.count}</div>
+      <div style="
+        font-size: 8px; 
+        color: rgba(255,255,255,0.9); 
+        text-align: center;
+        line-height: 1;
+        font-weight: 600;
+      ">${section.title}</div>
+    `;
+
+    // Add hover and click effects
+    circleCard.addEventListener('mouseenter', () => {
+      circleCard.style.transform = 'scale(1.1)';
+      circleCard.style.background = 'rgba(255,255,255,0.25)';
+      circleCard.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
+    });
+
+    circleCard.addEventListener('mouseleave', () => {
+      circleCard.style.transform = 'scale(1)';
+      circleCard.style.background = 'rgba(255,255,255,0.15)';
+      circleCard.style.boxShadow = 'none';
+    });
+
+    circleCard.addEventListener('click', () => {
+      circleCard.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        circleCard.style.transform = 'scale(1.1)';
+      }, 100);
+    });
+
+    rightSection.appendChild(circleCard);
+  });
+
+  cardContainer.appendChild(leftSection);
+  cardContainer.appendChild(rightSection);
+
+  originalRow.style.display = 'none';
+  originalRow.parentNode.insertBefore(cardContainer, originalRow.nextSibling);
+}
 
 function initMusicPlayer() {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(createMusicPlayer, 1000);
-      setTimeout(() => {
-        playTrack(0);
-      }, 1500);
+      setTimeout(() => playTrack(0), 1500);
     });
   } else {
     setTimeout(createMusicPlayer, 1000);
-    setTimeout(() => {
-      playTrack(0);
-    }, 1500);
+    setTimeout(() => playTrack(0), 1500);
   }
 }
 
-initMusicPlayer();
+function initCardLayout() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(createCardLayout, 1000);
+    });
+  } else {
+    setTimeout(createCardLayout, 1000);
+  }
+}
 
+// Initialize everything
+hideFooter();
+modifyLayout();
+document.addEventListener('DOMContentLoaded', modifyLayout);
+initMusicPlayer();
+initCardLayout();
+
+// Set up observers for dynamic content
 const observer = new MutationObserver(() => {
   if (!document.querySelector('#music-player')) {
     setTimeout(createMusicPlayer, 500);
   }
 });
 
+const cardObserver = new MutationObserver(() => {
+  if (document.querySelector('.row[style*="margin-top:70px"]') && 
+      document.querySelector('.row[style*="margin-top:70px"]').style.display !== 'none' &&
+      !document.querySelector('[style*="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)"]')) {
+    setTimeout(createCardLayout, 500);
+  }
+});
+
 setTimeout(() => {
-  observer.observe(document.body, { 
-    childList: true, 
-    subtree: true 
-  });
+  observer.observe(document.body, { childList: true, subtree: true });
+  cardObserver.observe(document.body, { childList: true, subtree: true });
 }, 2000);

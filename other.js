@@ -336,7 +336,7 @@ function createCardLayout() {
       0 8px 32px rgba(0,0,0,0.15),
       0 4px 16px rgba(0,0,0,0.1),
       inset 0 1px 0 rgba(255,255,255,0.8);
-    border: 3px solid ${tagColor};
+    border: 6px solid ${tagColor};
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -618,6 +618,7 @@ function initMusicPlayer() {
     setTimeout(() => playTrack(0), 1500);
   }
 }
+
 
 function initCardLayout() {
   if (document.readyState === 'loading') {

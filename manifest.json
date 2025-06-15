@@ -33,7 +33,8 @@
         "other.js",
         "attendance.js",
         "creep.js",
-        "gemini.js"
+        "gemini.js",
+        "ccc.js"
       ],
       "run_at": "document_end",
       "all_frames": false

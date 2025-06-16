@@ -43,7 +43,6 @@
     {
       "resources": [
         ".env",
-        "files.json",
         "back.png",
         "runner.gif",
         "music/*.mp3",

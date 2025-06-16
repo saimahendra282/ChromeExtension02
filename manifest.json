@@ -33,8 +33,7 @@
         "other.js",
         "attendance.js",
         "creep.js",
-        "gemini.js",
-        "ccc.js"
+        "gemini.js"
       ],
       "run_at": "document_end",
       "all_frames": false
@@ -42,7 +41,21 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": [".env", "back.png", "runner.gif", "slava.mp3", "background_music.mp3", "chat.html", "chat-icon.png", "roach.gif", "spider.gif", "creepybg.png"],
+      "resources": [
+        ".env",
+        "files.json",
+        "back.png",
+        "runner.gif",
+        "music/*.mp3",
+        "music/*.wav",
+        "music/*.ogg",
+        "music/manifest.json",
+        "chat.html",
+        "chat-icon.png",
+        "roach.gif",
+        "spider.gif",
+        "creepybg.png"
+      ],
       "matches": ["https://newerp.kluniversity.in/*"]
     }
   ],

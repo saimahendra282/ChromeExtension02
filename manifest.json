@@ -33,7 +33,9 @@
         "other.js",
         "attendance.js",
         "creep.js",
-        "gemini.js"
+        "gemini.js",
+        "sort.js",
+        "ccc.js"
       ],
       "run_at": "document_end",
       "all_frames": false
@@ -48,7 +50,11 @@
         "music/*.mp3",
         "music/*.wav",
         "music/*.ogg",
-   
+         "cgpa6.mp3",
+        "cgpa8.mp3",
+        "cgpa9.mp3",
+        "god.mp3",
+     "planets/*.png",
         "roach.gif",
         "spider.gif",
         "creepybg.png"

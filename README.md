@@ -7,10 +7,10 @@ Quick Faqs -
 <details> <summary><strong>What is this repo for?</strong></summary>
 This repo is made for a Chrome extension targeting the KL University ERP portal. Basically, it’s a Chrome extension designed to enhance the KL U ERP website experience.
 </details>
-<details><summary><strong>ok What is the purpose , Purpose enti ⁉️</strong></summary>
+<details><summary><strong>What is the purpose , Purpose ఏంటి ⁉️</strong></summary>
 Just for fun , i intially though of doing it for me personally but made this as public, so if anyone got any new ideas to add into our erp just include them in issues section 
 </details>
-<details> <summary><strong>How to set up the Chrome Extension on your device?</strong></summary>
+<details> <summary><strong>How to set up this Chrome Extension on your device?</strong></summary>
  <ul> <li>Download the zip file from the Releases section.</li>
   <li>See these sample images if you cant find the releases.</li>
 <div style="display: flex; flex-direction: row; gap: 10px; align-items: center;">
@@ -46,7 +46,7 @@ Just for fun , i intially though of doing it for me personally but made this as 
   <h1>and boom you got my extension on your device running 🎊</h1>
 </ul>
 </details>
-<details><summary><strong>What's new in erp now? em pikav nuvvu ippudu 🤨</strong></summary>
+<details><summary><strong>What's new in erp now? ఎమ్ పికావ్ నువ్ ఇప్పుడు 🤨</strong></summary>
 <h3>Well you opened this question so wanna know what i cooked?</h3>
   <ul>
     <li>
@@ -81,7 +81,11 @@ Just for fun , i intially though of doing it for me personally but made this as 
   <img src="https://github.com/user-attachments/assets/5e2ea181-7d99-4004-ba27-f71f42bd221e" height="156" width="156"/>
 
 </details>
----
+<details><summary><strong>I am seeing some images on buttons in music player, can i change them?</strong></summary>
+sure you can, here's how 👇
+ <li>I hardcoded the img names, so whatever img you want to replace replce with same file name </li>
+ <p>go to planets folder > select img you want replace > delete that > save your img with that old name and you are good to go </p>
+</details>
 
 ## **TO-DO**
 

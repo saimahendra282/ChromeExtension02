@@ -52,7 +52,7 @@ Just for fun , i intially though of doing it for me personally but made this as 
     <li>
       new landing page 
     </li>
-     <img src="https://github.com/user-attachments/assets/4026330a-2c62-46e1-9ce9-57ca7839995d" width="500"/>
+     <img src="https://github.com/saimahendra282/ChromeExtension02/blob/38e29245219e12d0877c3b9e0cd6455f790ad178/back.png" width="500"/>
     <li>
       Custom music player 
     </li>

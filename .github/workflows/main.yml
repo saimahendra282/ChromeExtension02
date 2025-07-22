@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository with PAT
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GH_PAT }}  # Your personal access token secret
+          token: ${{ secrets.GH_PAT }}
 
       - name: Set up Git identity
         run: |
@@ -24,17 +24,25 @@ jobs:
         id: get_tag
         run: echo "tag=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
-      - name: Update README.md with new release link
+      - name: Update README.md with new release link and badge version
         run: |
           TAG=${{ steps.get_tag.outputs.tag }}
-          OLD_URL_REGEX='https:\/\/github\.com\/saimahendra282\/ChromeExtension02\/archive\/refs\/tags\/v[0-9]+\.[0-9]+\.[0-9]+\.zip'
-          NEW_URL="https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/$TAG.zip"
-          sed -i -E "s|$OLD_URL_REGEX|$NEW_URL|g" README.md
+
+          # Update the ZIP link
+          ZIP_REGEX='https:\/\/github\.com\/saimahendra282\/ChromeExtension02\/archive\/refs\/tags\/v[0-9]+\.[0-9]+\.[0-9]+\.zip'
+          NEW_ZIP_URL="https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/$TAG.zip"
+          sed -i -E "s|$ZIP_REGEX|$NEW_ZIP_URL|g" README.md
+
+          # Update the badge display version (vX.X.X)
+          BADGE_REGEX='https:\/\/img\.shields\.io\/badge\/Download_Extension-v[0-9]+\.[0-9]+\.[0-9]+-green'
+          NEW_BADGE_URL="https://img.shields.io/badge/Download_Extension-${TAG}-green"
+          sed -i -E "s|$BADGE_REGEX|$NEW_BADGE_URL|g" README.md
 
       - name: Commit and push changes
         run: |
           git config pull.rebase false
           git pull origin main
+
           if git diff --quiet; then
             echo "No changes to commit"
           else

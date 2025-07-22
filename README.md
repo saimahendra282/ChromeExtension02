@@ -4,7 +4,7 @@ So, you looked at this repo, right?
 small testing change 1
 Isn't it interesting how we can just apply our own rules by writing a few lines of JS?
 ---
-Down my extension here - https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/v2.0.7.zip
+Down my extension here - https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/v2.0.8.zip
 Quick Faqs - 
 <details> <summary><strong>What is this repo for?</strong></summary>
 This repo is made for a Chrome extension targeting the KL University ERP portal. Basically, it’s a Chrome extension designed to enhance the KL U ERP website experience.

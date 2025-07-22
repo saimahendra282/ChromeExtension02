@@ -1,44 +1,53 @@
-name: Auto Update download link
+name: Sync README with Latest Release Tag
 
 on:
-  push:
-    tags:
-      - 'v*'  # Triggers on tags like v2.0.8
+  schedule:
+    - cron: "0 0 * * 0"  # Every Sunday at 00:00 UTC
+  workflow_dispatch:
 
 jobs:
-  update-readme:
+  sync-readme:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository with PAT
+      - name: Checkout with PAT
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GH_PAT }}  # Your personal access token secret
+          token: ${{ secrets.GH_PAT }}
 
-      - name: Set up Git identity
+      - name: Set up Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Extract tag name
-        id: get_tag
-        run: echo "tag=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
-
-      - name: Update README.md with new release link
+      - name: Get latest tag
+        id: latest_tag
         run: |
-          TAG=${{ steps.get_tag.outputs.tag }}
-          OLD_URL_REGEX='https:\/\/github\.com\/saimahendra282\/ChromeExtension02\/archive\/refs\/tags\/v[0-9]+\.[0-9]+\.[0-9]+\.zip'
-          NEW_URL="https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/$TAG.zip"
-          sed -i -E "s|$OLD_URL_REGEX|$NEW_URL|g" README.md
+          LATEST_TAG=$(git tag --sort=-creatordate | grep '^v' | head -n 1)
+          echo "Latest tag is $LATEST_TAG"
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
-      - name: Commit and push changes
+      - name: Update README.md with new release link and badge
         run: |
+          TAG=${{ steps.latest_tag.outputs.tag }}
+
+          # Update download link in markdown
+          LINK_REGEX='https:\/\/github\.com\/saimahendra282\/ChromeExtension02\/archive\/refs\/tags\/v[0-9]+\.[0-9]+\.[0-9]+\.zip'
+          NEW_LINK="https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/$TAG.zip"
+          sed -i -E "s|$LINK_REGEX|$NEW_LINK|g" README.md
+
+          # Update badge version in shields.io URL
+          BADGE_REGEX='https:\/\/img\.shields\.io\/badge\/Download_Extension-v[0-9]+\.[0-9]+\.[0-9]+-green'
+          NEW_BADGE="https://img.shields.io/badge/Download_Extension-${TAG}-green"
+          sed -i -E "s|$BADGE_REGEX|$NEW_BADGE|g" README.md
+
           git config pull.rebase false
           git pull origin main
+
           if git diff --quiet; then
-            echo "No changes to commit"
+            echo "README is already up to date."
           else
             git add README.md
-            git commit -m "Update README with latest release link: ${{ steps.get_tag.outputs.tag }}"
+            git commit -m "Sync README to latest tag: $TAG"
             git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/saimahendra282/ChromeExtension02.git HEAD:main
           fi

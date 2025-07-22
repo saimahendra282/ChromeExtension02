@@ -1,7 +1,7 @@
 <h1 align="center">Konichivass!!</h1>
 
 So, you looked at this repo, right?  
-small testing change
+small testing change 1
 Isn't it interesting how we can just apply our own rules by writing a few lines of JS?
 ---
 Down my extension here - https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/v2.0.7.zip

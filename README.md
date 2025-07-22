@@ -1,10 +1,10 @@
 <h1 align="center">Konichivass!!</h1>
 
 So, you looked at this repo, right?  
-small testing change 1
 Isn't it interesting how we can just apply our own rules by writing a few lines of JS?
 ---
-Down my extension here - https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/v2.0.8.zip
+[![Download Extension](https://img.shields.io/badge/Download_Extension-v2.0.7-green)](https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/v2.0.7.zip)
+
 Quick Faqs - 
 <details> <summary><strong>What is this repo for?</strong></summary>
 This repo is made for a Chrome extension targeting the KL University ERP portal. Basically, it’s a Chrome extension designed to enhance the KL U ERP website experience.
@@ -13,6 +13,7 @@ This repo is made for a Chrome extension targeting the KL University ERP portal.
 Just for fun , i intially though of doing it for me personally but made this as public, so if anyone got any new ideas to add into our erp just include them in issues section 
 </details>
 <details> <summary><strong>How to set up this Chrome Extension on your device?</strong></summary>
+ <li>Simple way - just click the download button above and extract the zip file  , load the extension to chrome</li>
  <ul> <li>Download the zip file from the Releases section.</li>
   <li>See these sample images if you cant find the releases.</li>
 <div style="display: flex; flex-direction: row; gap: 10px; align-items: center;">

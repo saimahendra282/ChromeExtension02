@@ -3,22 +3,24 @@ name: Auto Update download link
 on:
   push:
     tags:
-      - 'v*'  # Matches tags like v2.0.7, v1.5.0, etc.
+      - 'v*'  # Triggers on tags like v2.0.8
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository with PAT
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT }}  # Your personal access token secret
 
-      - name: Set up Git
+      - name: Set up Git identity
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Get tag name
+      - name: Extract tag name
         id: get_tag
         run: echo "tag=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
@@ -31,6 +33,12 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git add README.md
-          git commit -m "Update README with latest release link: ${{ steps.get_tag.outputs.tag }}"
-          git push origin HEAD:main
+          git config pull.rebase false
+          git pull origin main
+          if git diff --quiet; then
+            echo "No changes to commit"
+          else
+            git add README.md
+            git commit -m "Update README with latest release link: ${{ steps.get_tag.outputs.tag }}"
+            git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/saimahendra282/ChromeExtension02.git HEAD:main
+          fi

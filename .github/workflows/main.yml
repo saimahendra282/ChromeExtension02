@@ -1,8 +1,9 @@
 name: Auto Update download link
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'  # Matches tags like v2.0.7, v1.5.0, etc.
 
 jobs:
   update-readme:
@@ -17,7 +18,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Extract new version tag
+      - name: Get tag name
         id: get_tag
         run: echo "tag=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
@@ -32,4 +33,4 @@ jobs:
         run: |
           git add README.md
           git commit -m "Update README with latest release link: ${{ steps.get_tag.outputs.tag }}"
-          git push
+          git push origin HEAD:main

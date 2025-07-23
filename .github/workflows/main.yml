@@ -3,7 +3,7 @@ name: Auto Tag, Release, and Update README
 on:
   push:
     branches:
-      - main  # Only trigger on code commits to main
+      - main
 
 jobs:
   tag-and-release:
@@ -26,14 +26,15 @@ jobs:
         id: tag
         run: |
           LATEST_TAG=$(git tag --sort=-v:refname | grep '^v' | head -n 1)
+          echo "Latest tag: $LATEST_TAG"
 
           if [ -z "$LATEST_TAG" ]; then
-            LATEST_TAG="v2.0.7"
+            NEW_TAG="v2.0.8"
+          else
+            IFS='.' read -r MAJOR MINOR PATCH <<< "${LATEST_TAG#v}"
+            PATCH=$((PATCH + 1))
+            NEW_TAG="v$MAJOR.$MINOR.$PATCH"
           fi
-
-          IFS='.' read -r MAJOR MINOR PATCH <<< "${LATEST_TAG#v}"
-          PATCH=$((PATCH + 1))
-          NEW_TAG="v$MAJOR.$MINOR.$PATCH"
 
           echo "New tag: $NEW_TAG"
           git tag "$NEW_TAG"
@@ -46,7 +47,6 @@ jobs:
         run: |
           TITLE=$(head -n 1 release-notes.txt)
           BODY=$(tail -n +2 release-notes.txt)
-
           echo "title=$TITLE" >> $GITHUB_OUTPUT
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
@@ -80,12 +80,12 @@ jobs:
         run: |
           TAG=${{ needs.tag-and-release.outputs.new_tag }}
 
-          # Update ZIP download link
+          # Update ZIP link
           ZIP_REGEX='https:\/\/github\.com\/saimahendra282\/ChromeExtension02\/archive\/refs\/tags\/v[0-9]+\.[0-9]+\.[0-9]+\.zip'
           NEW_ZIP="https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/$TAG.zip"
           sed -i -E "s|$ZIP_REGEX|$NEW_ZIP|g" README.md
 
-          # Update badge URL
+          # Update badge
           BADGE_REGEX='https:\/\/img\.shields\.io\/badge\/Download_Extension-v[0-9]+\.[0-9]+\.[0-9]+-green'
           NEW_BADGE="https://img.shields.io/badge/Download_Extension-${TAG}-green"
           sed -i -E "s|$BADGE_REGEX|$NEW_BADGE|g" README.md
@@ -99,3 +99,4 @@ jobs:
             git add README.md
             git commit -m "Update README with release: ${{ needs.tag-and-release.outputs.new_tag }}"
             git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/saimahendra282/ChromeExtension02.git HEAD:main
+          fi

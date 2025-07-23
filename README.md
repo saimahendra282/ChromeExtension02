@@ -3,7 +3,7 @@
 So, you looked at this repo, right?  
 Isn't it interesting how we can just apply our own rules by writing a few lines of JS?
 ---
-[![Download Extension](https://img.shields.io/badge/Download_Extension-v2.0.11-green)](https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/v2.0.11.zip)
+[![Download Extension](https://img.shields.io/badge/Download_Extension-v2.0.12-green)](https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/v2.0.12.zip)
 
 Quick Faqs - 
 <details> <summary><strong>What is this repo for?</strong></summary>

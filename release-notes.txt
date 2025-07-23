@@ -1,3 +1,4 @@
-tag: v2.0.9
-title: once a wise man said if it works dont touch it
-notes: Added dark mode and fixed minor bugs.
+tag: v2.0.8
+title: automate testing
+notes: 
+https://newerp.kluniversity.in/index.php?r=site%2Findex

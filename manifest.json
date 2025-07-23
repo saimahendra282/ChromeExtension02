@@ -15,7 +15,8 @@
     {
       "matches": [
         "https://newerp.kluniversity.in/",
-        "https://newerp.kluniversity.in/index.php"
+        "https://newerp.kluniversity.in/index.php",
+        "https://newerp.kluniversity.in/index.php?r=site%2Findex"
       ],
       "js": ["content.js"],
       "run_at": "document_end",
@@ -25,7 +26,8 @@
       "matches": ["https://newerp.kluniversity.in/*"],
       "exclude_matches": [
         "https://newerp.kluniversity.in/",
-        "https://newerp.kluniversity.in/index.php"
+        "https://newerp.kluniversity.in/index.php",
+        "https://newerp.kluniversity.in/index.php?r=site%2Findex"
       ],
       "js": [
         "env.js",
@@ -44,20 +46,16 @@
   "web_accessible_resources": [
     {
       "resources": [
-        ".env",
-        "back.png",
-        "runner.gif",
+         ".env",
+        "*.png",
+        "*.gif",
         "music/*.mp3",
+        "*.ogg",
+        "files.json",
+        "user.json",
+        "planets/*.png",
         "music/*.wav",
-        "music/*.ogg",
-         "cgpa6.ogg",
-        "cgpa8.ogg",
-        "cgpa9.ogg",
-        "god.ogg",
-     "planets/*.png",
-        "roach.gif",
-        "spider.gif",
-        "creepybg.png"
+        "music/*.ogg"
       ],
       "matches": ["https://newerp.kluniversity.in/*"]
     }

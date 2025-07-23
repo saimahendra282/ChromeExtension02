@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.extract.outputs.tag }}
+      title: ${{ steps.extract.outputs.title }}
+      notes: ${{ steps.extract.outputs.notes }}
 
     steps:
       - name: Checkout repository
@@ -29,7 +31,9 @@ jobs:
         run: |
           TAG=$(grep '^tag:' release-notes.txt | cut -d':' -f2- | xargs)
           TITLE=$(grep '^title:' release-notes.txt | cut -d':' -f2- | xargs)
-          NOTES=$(grep '^notes:' release-notes.txt | cut -d':' -f2- | xargs)
+
+          # Extract everything after "notes:" until EOF or next key
+          NOTES=$(awk '/^notes:/ {flag=1; next} /^tag:|^title:/ {flag=0} flag' release-notes.txt)
 
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "title=$TITLE" >> $GITHUB_OUTPUT
@@ -92,4 +96,3 @@ jobs:
             git add README.md
             git commit -m "Update README for ${{ needs.release.outputs.tag }}"
             git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/saimahendra282/ChromeExtension02.git HEAD:main
-          fi

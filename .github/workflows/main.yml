@@ -9,7 +9,9 @@ jobs:
   tag-and-release:
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.create_tag.outputs.new_tag }}
+      tag: ${{ steps.bump_tag.outputs.new_tag }}
+      title: ${{ steps.notes.outputs.title }}
+      body: ${{ steps.notes.outputs.body }}
 
     steps:
       - name: Checkout code
@@ -22,10 +24,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Get latest tag and bump patch version
-        id: create_tag
+      - name: Fetch latest tag and bump patch version
+        id: bump_tag
         run: |
-          # Get latest tag or fallback to v0.0.0
+          git fetch --tags
           LATEST_TAG=$(git tag --sort=-v:refname | grep '^v' | head -n 1)
           echo "Latest tag: $LATEST_TAG"
           if [ -z "$LATEST_TAG" ]; then
@@ -38,15 +40,32 @@ jobs:
 
           git tag $NEW_TAG
           git push origin $NEW_TAG
-
           echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub release
+      - name: Read release title and notes from file
+        id: notes
+        run: |
+          TITLE=$(grep -m 1 '^Title:' release-notes.* | sed 's/^Title: *//')
+          BODY=$(awk '/^Notes:/ {flag=1; next} /^$/ {flag=0} flag {print}' release-notes.*)
+
+          # Fallback if not found
+          if [ -z "$TITLE" ]; then TITLE="Release ${{ steps.bump_tag.outputs.new_tag }}"; fi
+          if [ -z "$BODY" ]; then BODY="Auto-generated release."; fi
+
+          echo "title<<EOF" >> $GITHUB_OUTPUT
+          echo "$TITLE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.create_tag.outputs.new_tag }}
-          name: ${{ steps.create_tag.outputs.new_tag }}
-          body: "Auto-release from commit: ${{ github.event.head_commit.message }}"
+          tag_name: ${{ steps.bump_tag.outputs.new_tag }}
+          name: ${{ steps.notes.outputs.title }}
+          body: ${{ steps.notes.outputs.body }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
@@ -65,24 +84,23 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Update README.md with new release link and badge version
+      - name: Update README.md with new release link and badge
         run: |
           TAG=${{ needs.tag-and-release.outputs.tag }}
 
-          # Update ZIP link
+          # Update download link
           ZIP_REGEX='https:\/\/github\.com\/saimahendra282\/ChromeExtension02\/archive\/refs\/tags\/v[0-9]+\.[0-9]+\.[0-9]+\.zip'
-          NEW_ZIP_URL="https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/$TAG.zip"
-          sed -i -E "s|$ZIP_REGEX|$NEW_ZIP_URL|g" README.md
+          NEW_ZIP="https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/$TAG.zip"
+          sed -i -E "s|$ZIP_REGEX|$NEW_ZIP|g" README.md
 
-          # Update badge text
+          # Update badge version
           BADGE_REGEX='https:\/\/img\.shields\.io\/badge\/Download_Extension-v[0-9]+\.[0-9]+\.[0-9]+-green'
-          NEW_BADGE_URL="https://img.shields.io/badge/Download_Extension-${TAG}-green"
-          sed -i -E "s|$BADGE_REGEX|$NEW_BADGE_URL|g" README.md
+          NEW_BADGE="https://img.shields.io/badge/Download_Extension-${TAG}-green"
+          sed -i -E "s|$BADGE_REGEX|$NEW_BADGE|g" README.md
 
       - name: Commit and push changes
         run: |
           git pull origin main
-
           if git diff --quiet; then
             echo "No changes to commit"
           else

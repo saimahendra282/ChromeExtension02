@@ -1,4 +1,4 @@
-name: Auto Tag, Release, and Update README
+name: Manual Release and README Update
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
       - main
 
 jobs:
-  tag-and-release:
+  release:
     runs-on: ubuntu-latest
     outputs:
-      new_tag: ${{ steps.set_tag.outputs.new_tag }}
+      tag: ${{ steps.extract.outputs.tag }}
 
     steps:
       - name: Checkout repository
@@ -22,89 +22,71 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Get latest version and bump patch
-        id: set_tag
+      - name: Extract release metadata from release-notes.txt
+        id: extract
         run: |
-          git fetch --tags
-          LATEST_TAG=$(git tag --sort=-v:refname | grep '^v' | head -n 1)
+          TAG=$(grep '^tag:' release-notes.txt | cut -d':' -f2- | xargs)
+          TITLE=$(grep '^title:' release-notes.txt | cut -d':' -f2- | xargs)
+          NOTES=$(grep '^notes:' release-notes.txt | cut -d':' -f2- | xargs)
 
-          if [ -z "$LATEST_TAG" ]; then
-            MAJOR=2
-            MINOR=0
-            PATCH=8
-          else
-            VERSION="${LATEST_TAG#v}"
-            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
-            PATCH=$((PATCH + 1))
-          fi
-
-          NEW_TAG="v$MAJOR.$MINOR.$PATCH"
-          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
-
-          # Tag only if doesn't exist
-          if git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
-            echo "Tag $NEW_TAG already exists. Skipping tag push."
-          else
-            git tag "$NEW_TAG"
-            git push origin "$NEW_TAG"
-          fi
-
-      - name: Read release title and notes from file
-        id: release_content
-        run: |
-          TITLE=$(head -n 1 release-notes.txt)
-          BODY=$(tail -n +2 release-notes.txt)
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "title=$TITLE" >> $GITHUB_OUTPUT
-          echo "body<<EOF" >> $GITHUB_OUTPUT
-          echo "$BODY" >> $GITHUB_OUTPUT
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release (if new)
-        if: steps.set_tag.outputs.new_tag != ''
+      - name: Create Git tag
+        run: |
+          TAG=${{ steps.extract.outputs.tag }}
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists. Skipping tag creation."
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.set_tag.outputs.new_tag }}
-          name: ${{ steps.release_content.outputs.title }}
-          body: ${{ steps.release_content.outputs.body }}
+          tag_name: ${{ steps.extract.outputs.tag }}
+          name: ${{ steps.extract.outputs.title }}
+          body: ${{ steps.extract.outputs.notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
   update-readme:
-    needs: tag-and-release
+    needs: release
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout with PAT
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GH_PAT }}
 
-      - name: Set up Git
+      - name: Set up Git identity
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Update README with new version
+      - name: Update README with new tag
         run: |
-          TAG=${{ needs.tag-and-release.outputs.new_tag }}
+          TAG=${{ needs.release.outputs.tag }}
 
-          # Update ZIP link
           ZIP_REGEX='https:\/\/github\.com\/saimahendra282\/ChromeExtension02\/archive\/refs\/tags\/v[0-9]+\.[0-9]+\.[0-9]+\.zip'
           NEW_ZIP="https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/$TAG.zip"
           sed -i -E "s|$ZIP_REGEX|$NEW_ZIP|g" README.md
 
-          # Update badge
           BADGE_REGEX='https:\/\/img\.shields\.io\/badge\/Download_Extension-v[0-9]+\.[0-9]+\.[0-9]+-green'
           NEW_BADGE="https://img.shields.io/badge/Download_Extension-${TAG}-green"
           sed -i -E "s|$BADGE_REGEX|$NEW_BADGE|g" README.md
 
-      - name: Commit and push updated README
+      - name: Commit and push README changes
         run: |
           git pull origin main
           if git diff --quiet; then
             echo "README already up to date."
           else
             git add README.md
-            git commit -m "Update README with release: ${{ needs.tag-and-release.outputs.new_tag }}"
+            git commit -m "Update README for ${{ needs.release.outputs.tag }}"
             git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/saimahendra282/ChromeExtension02.git HEAD:main
-          fi

@@ -1,3 +1,3 @@
 tag: v2.0.8
-title: if it wont work i will stop this shit
+title: once a wise man said if it works dont touch it
 notes: Added dark mode and fixed minor bugs.

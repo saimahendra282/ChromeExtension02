@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - release-notes.txt
 
 jobs:
   release:
@@ -90,4 +92,3 @@ jobs:
             git add README.md
             git commit -m "Update README for ${{ needs.release.outputs.tag }}"
             git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/saimahendra282/ChromeExtension02.git HEAD:main
-            fi

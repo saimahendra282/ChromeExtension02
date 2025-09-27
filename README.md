@@ -100,7 +100,7 @@ sure you can, here's how 👇
 
 ---
 
-<h2 align="center">Congrats visitor, you have unlocked your own browser extension 🗣️🗣️🎊</h2>
+<h2 align="center">Congrats visitor, you have unlocked your own browser extension </h2>
 
 <h3 align="center">Got any suggestions or new features? Drop them in the Issues section.</h3>
 
@@ -110,3 +110,4 @@ sure you can, here's how 👇
 **Please don’t be offended if you don’t like the theme — I like it 😄 THIS repo updates continuously, so it is better to update your extension weekly**
 **Also if you got any errors even if it is small file not found stuff just mention them in [issues](https://github.com/saimahendra282/ChromeExtension02/issues) or ping me on any social media, some times i forgot to modify the manifest file when publisginh as new release.**
 <h3>If you liked my work please star this repo ^_~ </h3>
+

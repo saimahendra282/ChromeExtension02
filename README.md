@@ -1,5 +1,6 @@
 <h1 align="center">Konichivass!!</h1>
-
+NOTE - <b>As erp portal is being updated this extension may not work for now, gemini integration will work for sure , but regarding other features IDK.. </b><br>
+<b>Keep Following readme and i will update extension again within a week.</b>
 So, you looked at this repo, right?  
 Isn't it interesting how we can just apply our own rules by writing a few lines of JS?
 ---
@@ -110,4 +111,5 @@ sure you can, here's how 👇
 **Please don’t be offended if you don’t like the theme — I like it 😄 THIS repo updates continuously, so it is better to update your extension weekly**
 **Also if you got any errors even if it is small file not found stuff just mention them in [issues](https://github.com/saimahendra282/ChromeExtension02/issues) or ping me on any social media, some times i forgot to modify the manifest file when publisginh as new release.**
 <h3>If you liked my work please star this repo ^_~ </h3>
+
 

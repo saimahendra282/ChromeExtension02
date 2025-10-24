@@ -1,5 +1,4 @@
 <h1 align="center">Konichivass!!</h1>
-NOTE - <b>As erp portal is being updated this extension may not work for now, gemini integration will work for sure , but regarding other features IDK.. </b><br>
 <b>Keep Following readme and i will update extension again within a week.</b>
 So, you looked at this repo, right?  
 Isn't it interesting how we can just apply our own rules by writing a few lines of JS?

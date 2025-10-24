@@ -1,13 +1,21 @@
-tag: v2.0.8
-title: Added one feature
+tag: v2.0.9
+title: Modifying the extension
 notes:
 <h2>In this release:</h2>
 <ul>
- Created a separate JSON file for assets
-  <li>Now users can now modify the landing page and CGPA music files according to their preferences. Any image or music file type will work.<br>
-      A guide on how to change assets will be added to the README later.</li>
-  <li>Changed Gemini toggle behavior</li>
-  <li>Added timings in the timetable</li>
+ Updated my extension as per new erp
+ <li>new landing page</li>
+ <li>attendance will work fine pls contact back if new errors are there</li>
+ <li>cgpa percent is added</li>
+ <li>remaining features wont work for now , i am updating this </li>
+ 
+</ul>
+<ul>
+removed file from manifest 
+<li>creep.js</li>
+<li>sort.js</li>
+<li>other.js</li>
+<li></li>
 </ul>
 
 <h3>To do in next release:</h3>

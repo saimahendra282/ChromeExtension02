@@ -32,11 +32,11 @@
       "js": [
         "env.js",
         "gemini-ai.js",
-        "other.js",
+        
         "attendance.js",
-        "creep.js",
+        
         "gemini.js",
-        "sort.js",
+        
         "ccc.js"
       ],
       "run_at": "document_end",

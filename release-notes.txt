@@ -15,7 +15,6 @@ removed file from manifest
 <li>creep.js</li>
 <li>sort.js</li>
 <li>other.js</li>
-<li></li>
 </ul>
 
 <h3>To do in next release:</h3>

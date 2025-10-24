@@ -7,7 +7,7 @@ notes:
  <li>new landing page</li>
  <li>attendance will work fine pls contact back if new errors are there</li>
  <li>cgpa percent is added</li>
- <li>remaining features wont work for now , i am updating this </li>
+ <li>remaining features wont work for now , i am updating this</li>
  
 </ul>
 <ul>

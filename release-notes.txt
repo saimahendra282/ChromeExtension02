@@ -3,7 +3,7 @@ title: Modifying the extension
 notes:
 <h2>In this release:</h2>
 <ul>
- Updated my extension as per new erp
+ Updated my extension as per new erp.
  <li>new landing page</li>
  <li>attendance will work fine pls contact back if new errors are there</li>
  <li>cgpa percent is added</li>

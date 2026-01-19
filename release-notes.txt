@@ -1,17 +1,12 @@
-tag: v2.0.9
-title: Modifying the extension
+tag: v2.1.0
+title: added new feature
 notes:
 <h2>In this release:</h2>
 <ul>
- Updated my extension as per new erp.
- <li>new landing page</li>
- <li>attendance will work fine pls contact back if new errors are there</li>
- <li>cgpa percent is added</li>
- <li>remaining features wont work for now , i am updating this</li>
- 
+Added classes needed to attend per course 
 </ul>
 <ul>
-removed file from manifest 
+removed file from manifest for personal ref
 <li>creep.js</li>
 <li>sort.js</li>
 <li>other.js</li>

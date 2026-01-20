@@ -1,9 +1,9 @@
-tag: v2.1.0
-title: added new feature
+tag: v2.1.1
+title: fixing login page
 notes:
 <h2>In this release:</h2>
 <ul>
-Added classes needed to attend per course 
+fixed login page now it works , also added new bg for mobile view 
 </ul>
 <ul>
 removed file from manifest for personal ref

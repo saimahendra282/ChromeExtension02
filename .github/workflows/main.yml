@@ -1,4 +1,4 @@
-name: Manual Release and README Update
+name: Manual Release
 
 on:
   push:
@@ -32,7 +32,6 @@ jobs:
           TAG=$(grep '^tag:' release-notes.txt | cut -d':' -f2- | xargs)
           TITLE=$(grep '^title:' release-notes.txt | cut -d':' -f2- | xargs)
 
-          # Extract everything after "notes:" until EOF or next key
           NOTES=$(awk '/^notes:/ {flag=1; next} /^tag:|^title:/ {flag=0} flag' release-notes.txt)
 
           echo "tag=$TAG" >> $GITHUB_OUTPUT
@@ -59,40 +58,3 @@ jobs:
           body: ${{ steps.extract.outputs.notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-
-  update-readme:
-    needs: release
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Set up Git identity
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Update README with new tag
-        run: |
-          TAG=${{ needs.release.outputs.tag }}
-
-          ZIP_REGEX='https:\/\/github\.com\/saimahendra282\/ChromeExtension02\/archive\/refs\/tags\/v[0-9]+\.[0-9]+\.[0-9]+\.zip'
-          NEW_ZIP="https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/$TAG.zip"
-          sed -i -E "s|$ZIP_REGEX|$NEW_ZIP|g" README.md
-
-          BADGE_REGEX='https:\/\/img\.shields\.io\/badge\/Download_Extension-v[0-9]+\.[0-9]+\.[0-9]+-green'
-          NEW_BADGE="https://img.shields.io/badge/Download_Extension-${TAG}-green"
-          sed -i -E "s|$BADGE_REGEX|$NEW_BADGE|g" README.md
-
-      - name: Commit and push README changes
-        run: |
-          git pull origin main
-          if git diff --quiet; then
-            echo "README already up to date."
-          else
-            git add README.md
-            git commit -m "Update README for ${{ needs.release.outputs.tag }}"
-            git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/saimahendra282/ChromeExtension02.git HEAD:main

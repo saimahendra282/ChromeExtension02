@@ -1,9 +1,17 @@
-tag: v2.1.1
-title: fixing login page
+tag: v2.1.2
+title: Updating extension
 notes:
 <h2>In this release:</h2>
 <ul>
-fixed login page now it works , also added new bg for mobile view 
+<li>
+Removed unnecessary console statements
+</li> 
+<li>
+added profile pic , now users can change thier profie pics check readme for details 
+</li>
+<li>
+added new concept in attendance , now we can edit total attended and condusted classes and calculate attendance for them seperatly.
+</li>
 </ul>
 <ul>
 removed file from manifest for personal ref
@@ -14,7 +22,7 @@ removed file from manifest for personal ref
 
 <h3>To do in next release:</h3>
 <ul>
-  <li>Allow users to update their profile picture</li>
+  
   <li>Add auto-calculation of internals</li>
   <li>Fix minor bugs</li>
 </ul>

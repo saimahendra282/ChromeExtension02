@@ -34,7 +34,7 @@
         "gemini-ai.js",
         
         "attendance.js",
-        
+        "pimg.js",
         "gemini.js",
         
         "ccc.js"
@@ -48,6 +48,8 @@
       "resources": [
          ".env",
         "*.png",
+        "*.jpg",
+        "*.jpeg",
         "*.gif",
         "music/*.mp3",
         "*.ogg",

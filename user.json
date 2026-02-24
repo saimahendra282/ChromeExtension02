@@ -4,10 +4,10 @@
   "sai": "image.png",
   "ProfilePic":"runner.gif",
   "audio": {
-    "cgpa6": "audio/cgpa6.ogg",
-    "cgpa8": "audio/cgpa8.ogg",
-    "cgpa9": "audio/cgpa9.ogg",
-    "god": "audio/god.ogg"
+    "cgpa6":"cgpa6.ogg",
+    "cgpa8":"cgpa8.ogg",
+    "cgpa9":"cgpa9.ogg",
+    "god": "god.ogg"
   },
   "titles": {
     "below6": "Keep Going! Every Step Counts! 💪",

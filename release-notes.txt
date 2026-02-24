@@ -1,16 +1,15 @@
-tag: v2.1.2
+tag: v2.1.3
 title: Updating extension
 notes:
 <h2>In this release:</h2>
 <ul>
 <li>
-Removed unnecessary console statements
+Refactored the avg attendance calculation
 </li> 
 <li>
-added profile pic , now users can change thier profie pics check readme for details 
+Refactored home page
 </li>
 <li>
-added new concept in attendance , now we can edit total attended and condusted classes and calculate attendance for them seperatly.
 </li>
 </ul>
 <ul>

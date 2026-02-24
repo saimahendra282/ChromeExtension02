@@ -4,8 +4,8 @@ So, you looked at this repo, right?
 Isn't it interesting how we can just apply our own rules by writing a few lines of JS?
 ---
 <div align="center">
-  <a href="https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/v2.1.1.zip" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 20px;background:#28a745;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.2);">
-    ⬇️ Download Extension v2.1.2
+  <a href="https://github.com/saimahendra282/ChromeExtension02/archive/refs/tags/v2.1.3.zip" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 20px;background:#28a745;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+    ⬇️ Download Extension v2.1.3
   </a>
 </div>
 
